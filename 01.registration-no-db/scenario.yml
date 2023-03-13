@@ -1,0 +1,35 @@
+---
+timeout: 10
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 0.5
+
+  - name: MI check Register
+    type: opensips-cli
+    script: check-register.py
+    require: Register
+
+  - name: Unregister
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-unregister.xml
+    require:
+      after:
+        task: Register
+        wait: 3
+
+  - name: MI check Unregister
+    type: opensips-cli
+    script: check-register.py
+    require: Unregister
+    args: unregister

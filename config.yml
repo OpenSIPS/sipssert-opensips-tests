@@ -1,0 +1,28 @@
+---
+networks:
+  - name: osbr0
+    subnet: {{ network_range }}
+    gateway: {{ network_gateway }}
+
+# network that should be used by all scenarios
+network: osbr0
+
+# global defaults
+defaults:
+  uac-sipp:
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    keys:
+      domain: {{ opensips_ip }}
+  opensips-cli:
+    mi_ip: {{ opensips_ip }}
+  opensips:
+    ip: {{ opensips_ip }}
+    socket: udp:{{ opensips_ip }}:{{ opensips_port }}
+    stop_timeout: 5
+  mysql:
+    ip: {{ mysql_ip }}
+    image: mysql:5.7
+    label: mysql
+    stop_timeout: 5
+  mysql-client:
+    host: {{ mysql_ip }}

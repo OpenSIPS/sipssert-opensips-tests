@@ -1,0 +1,7 @@
+---
+network_range: 192.168.52.0/24
+network_gateway: 192.168.52.254
+opensips_ip: 192.168.52.1
+opensips_port: 5060
+mysql_ip: 192.168.52.2
+username: testing
