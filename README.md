@@ -57,6 +57,11 @@ Performs multiple registrations, but limit the number of contacts
 1. Verifies that after each iteration, the correct number of contacts is in memory
 2. Checks that the database contains the correct number of entries
 
+### 08.registration-overwrite
+
+Performs multiple registrations, each one overwriting the previous one
+1. Verifies that after each iteration, there is only one contact registered
+2. Checks that each registration overwrites the next one
 
 ## Execution
 
