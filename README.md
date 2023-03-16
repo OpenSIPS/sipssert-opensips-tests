@@ -63,6 +63,15 @@ Performs multiple registrations, each one overwriting the previous one
 1. Verifies that after each iteration, there is only one contact registered
 2. Checks that each registration overwrites the next one
 
+### 09.call-dialog
+
+Performs a call with dialog support and stored in MySQL database. Verification steps are:
+1. Place a call from a UAC to an UAS
+2. Check the dialog has been created (dialog stats and `dlg_list` are checked)
+3. Check that the dialog has been properly flushed in database
+4. When the call finishes, we check the stats are properly cleared
+5. We check the call as been removed from the database
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.

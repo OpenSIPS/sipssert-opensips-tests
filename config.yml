@@ -14,6 +14,9 @@ defaults:
     proxy: {{ opensips_ip }}:{{ opensips_port }}
     keys:
       domain: {{ opensips_ip }}
+  uas-sipp:
+    ip: {{ uas_ip }}
+    port: {{ uas_port }}
   opensips-cli:
     mi_ip: {{ opensips_ip }}
   opensips:
