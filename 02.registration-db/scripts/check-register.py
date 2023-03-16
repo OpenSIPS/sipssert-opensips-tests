@@ -11,10 +11,8 @@ l = len(out['Domains'][0]['AORs'])
 if unregister:
     if l == 0:
         sys.exit(0)
-    print("ERR: len={}".format(l))
     if l != 1:
         sys.exit(1)
-    print("ERR: json={}".format(out['Domains'][0]['AORs'][0]))
     if out['Domains'][0]['AORs'][0]['Contacts'][0]['Expires'] != "deleted":
         sys.exit(2)
 else:
