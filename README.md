@@ -51,6 +51,12 @@ Performs a registration and then a re-registration for the same contact.
 2. Checks the re-register matches the same contact and updates the registration
 3. Verifies the entry expires correctly
 
+### 07.registration-limit
+
+Performs multiple registrations, but limit the number of contacts
+1. Verifies that after each iteration, the correct number of contacts is in memory
+2. Checks that the database contains the correct number of entries
+
 
 ## Execution
 

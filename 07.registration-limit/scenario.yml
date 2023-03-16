@@ -1,0 +1,121 @@
+---
+timeout: 60
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+    ready:
+      wait: 10
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: Register UAC 1
+    type: uac-sipp
+    username: {{ username }}
+    port: {{ uac_port + 1 }}
+    config_file: scripts/sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 0.5
+
+  - name: MI check Register UAC 1
+    type: opensips-cli
+    script: scripts/check-register.py
+    args: 1
+    require:
+      after: Register UAC 1
+
+  - name: MySQL check Register UAC 1
+    type: mysql-client
+    script: scripts/mysql-register.sh
+    args: 1
+    require:
+      - after:
+          task: Register UAC 1
+          wait: 3
+
+  - name: Register UAC 2
+    type: uac-sipp
+    username: {{ username }}
+    port: {{ uac_port + 2 }}
+    config_file: scripts/sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 5
+
+  - name: MI check Register UAC 2
+    type: opensips-cli
+    script: scripts/check-register.py
+    args: 2
+    require:
+      after: Register UAC 2
+
+  - name: MySQL check Register UAC 2
+    type: mysql-client
+    script: scripts/mysql-register.sh
+    args: 2
+    require:
+      - after:
+          task: Register UAC 2
+          wait: 3
+
+  - name: Register UAC 3
+    type: uac-sipp
+    username: {{ username }}
+    port: {{ uac_port + 3 }}
+    config_file: scripts/sipp-register-fail.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 10
+
+  - name: MI check Register UAC 3
+    type: opensips-cli
+    script: scripts/check-register.py
+    args: 2
+    require:
+      after: Register UAC 3
+
+  - name: MySQL check Register UAC 3
+    type: mysql-client
+    script: scripts/mysql-register.sh
+    args: 2
+    require:
+      - after:
+          task: Register UAC 3
+          wait: 3
+
+  - name: MI check Expired UAC 1
+    type: opensips-cli
+    script: scripts/check-register.py
+    args: 1
+    require:
+      started:
+        task: Register UAC 1
+        wait: 21
+
+  - name: MI check Expired UAC 2
+    type: opensips-cli
+    script: scripts/check-register.py
+    args: 0
+    require:
+      started:
+        task: Register UAC 2
+        wait: 21
+
+  - name: MySQL check Expired
+    type: mysql-client
+    script: scripts/mysql-register.sh
+    args: 0
+    require:
+      - after:
+          task: MI check Expired UAC 1
+          wait: 2
+      - after:
+          task: MI check Expired UAC 2
+          wait: 2

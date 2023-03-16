@@ -10,6 +10,7 @@ network: osbr0
 # global defaults
 defaults:
   uac-sipp:
+    port: {{ uac_port }}
     proxy: {{ opensips_ip }}:{{ opensips_port }}
     keys:
       domain: {{ opensips_ip }}
