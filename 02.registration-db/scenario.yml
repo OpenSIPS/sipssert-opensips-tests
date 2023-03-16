@@ -40,13 +40,12 @@ tasks:
   - name: Unregister
     type: uac-sipp
     username: {{ username }}
-    config_file: sipp-unregister.xml
+    config_file: scripts/sipp-unregister.xml
     require: MySQL check Register
 
   - name: MI check Unregister
     type: opensips-cli
     script: scripts/check-register.py
-    require: Unregister
     args: unregister
     require:
       after:
@@ -56,7 +55,6 @@ tasks:
   - name: MySQL check Unregister
     type: mysql-client
     script: scripts/mysql-register.sh
-    require: Unregister
     args: unregister
     require:
       after:
