@@ -44,6 +44,13 @@ minimum expire time.
 Same as [03.registration-expire](#03registration-expire), but enforces a
 maximum expire time.
 
+### 06.registration-reregister-expire
+
+Performs a registration and then a re-registration for the same contact.
+1. Verifies that the initial registration was correct both through MI and MySQL
+2. Checks the re-register matches the same contact and updates the registration
+3. Verifies the entry expires correctly
+
 
 ## Execution
 
