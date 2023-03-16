@@ -1,0 +1,64 @@
+---
+timeout: 30
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+    ready:
+      wait: 10
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: scripts/sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 0.5
+
+  - name: MI check Register
+    type: opensips-cli
+    script: scripts/check-register.py
+    require:
+      started:
+        task: Register
+        wait: 0.5
+
+  - name: MySQL check Register
+    type: mysql-client
+    script: scripts/mysql-register.sh
+    require:
+      started:
+        task: Register
+        wait: 3
+
+  - name: MI check Alive
+    type: opensips-cli
+    script: scripts/check-register.py
+    require:
+      started:
+        task: Register
+        wait: 5
+
+  - name: MI check Expired
+    type: opensips-cli
+    script: scripts/check-register.py
+    args: expired
+    require:
+      started:
+        task: Register
+        wait: 10
+
+  - name: MySQL check Expired
+    type: mysql-client
+    script: scripts/mysql-register.sh
+    args: expired
+    require:
+      after:
+        task: MI check Expired
+        wait: 2

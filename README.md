@@ -34,6 +34,17 @@ Same as [02.registration-db](#02registration-db), but leaves the contact to expi
 1. Checks through MI that the registration was removed
 2. Checks the database is empty after timer flush
 
+### 04.registration-expire-min
+
+Same as [03.registration-expire](#03registration-expire), but enforces a
+minimum expire time.
+
+### 05.registration-expire-max
+
+Same as [03.registration-expire](#03registration-expire), but enforces a
+maximum expire time.
+
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
