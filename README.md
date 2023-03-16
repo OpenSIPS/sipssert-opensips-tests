@@ -28,6 +28,12 @@ Performs registrations tests using MySQL database. Verification steps are:
 5. Check the registration dissapeared
 6. Checks the database is empty after timer flush
 
+### 03.registration-expire
+
+Same as [02.registration-db](#02registration-db), but leaves the contact to expire.
+1. Checks through MI that the registration was removed
+2. Checks the database is empty after timer flush
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
