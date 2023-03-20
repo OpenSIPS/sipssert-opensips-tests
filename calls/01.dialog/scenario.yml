@@ -4,6 +4,7 @@ timeout: 40
 tasks:
   - name: MySQL Server
     type: mysql
+    label: mysql
     ready:
       wait: 10
 
