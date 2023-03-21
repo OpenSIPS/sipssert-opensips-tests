@@ -68,6 +68,49 @@ Performs multiple registrations, each one overwriting the previous one
 1. Verifies that after each iteration, there is only one contact registered
 2. Checks that each registration overwrites the next one
 
+### Authentication
+
+Performs authentication tests:
+
+#### 01.password-db-www
+
+Checks registration of an endpoint with passwords stored in DB
+1. The tests expects a challenge followed by a 200 OK at SIP level
+
+#### 02.password-db-www-domain
+
+Same as [01.password-db-www](#01password-db-www), but checks also checks the
+domain is correct.
+
+#### 03.password-db-proxy
+
+Same as [01.password-db-www](#01password-db-www), but checks if a call gets
+authenticated.
+
+#### 04.password-db-proxy-domain
+
+Same as [03.password-db-proxy](#03password-db-proxy), but checks if the domain
+is correct.
+
+#### 05.ha1-db-www
+
+Same as [01.password-db-www](#01password-db-www), but checks the ha1 password.
+
+#### 06.ha1-db-www-domain
+
+Same as [02.password-db-www-domain](#02password-db-www-domain), but checks the
+ha1 password.
+
+#### 07.ha1-db-proxy
+
+Same as [03.password-db-proxy](#03password-db-proxy), but checks the ha1
+password.
+
+#### 08.ha1-db-proxy-domain
+
+Same as [04.password-db-proxy-domain](#04password-db-proxy-domain), but checks
+the ha1 password.
+
 ### Calls
 
 Performs calls and checks different scenarios:

@@ -1,0 +1,23 @@
+---
+timeout: 20
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+    ready:
+      wait: 10
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    password: {{ password }}
+    config_file: scripts/sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 0.5
