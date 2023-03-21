@@ -111,9 +111,9 @@ password.
 Same as [04.password-db-proxy-domain](#04password-db-proxy-domain), but checks
 the ha1 password.
 
-### Calls
+### Dialog
 
-Performs calls and checks different scenarios:
+Checks call using dialog support.
 
 #### 01.dialog
 
@@ -123,6 +123,7 @@ Performs a call with dialog support and stored in MySQL database. Verification s
 3. Check that the dialog has been properly flushed in database
 4. When the call finishes, we check the stats are properly cleared
 5. We check the call as been removed from the database
+6. SIPP scenarios check the Record-Route headers are present and no Route
 
 ## Execution
 

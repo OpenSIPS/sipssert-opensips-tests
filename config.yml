@@ -4,7 +4,7 @@ networks:
     subnet: {{ network_range }}
     gateway: {{ network_gateway }}
 
-# network that should be used by all scenarios
+# default network that should be used by all scenarios
 network: osbr0
 
 # global defaults
@@ -17,6 +17,8 @@ defaults:
   uas-sipp:
     ip: {{ uas_ip }}
     port: {{ uas_port }}
+    keys:
+      domain: {{ opensips_ip }}
   opensips-cli:
     mi_ip: {{ opensips_ip }}
   opensips:
