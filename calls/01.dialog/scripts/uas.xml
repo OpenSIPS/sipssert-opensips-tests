@@ -24,6 +24,13 @@
   <!-- are saved and used for following messages sent. Useful to test   -->
   <!-- against stateful SIP proxies/B2BUAs.                             -->
   <recv request="INVITE" crlf="true" rrs="true">
+    <action>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" check_it="true" assign_to="dummy"/>
+      <ereg regexp="," search_in="hdr" header="Record-Route:" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" occurence="2" check_it_inverse="true" assign_to="dummy"/>
+      <!-- there should only be no Route header -->
+      <ereg regexp=".+" start_line="true" search_in="hdr" header="Route:" check_it_inverse="true" assign_to="dummy"/>
+    </action>
   </recv>
 
   <!-- 
@@ -104,9 +111,23 @@
   <recv request="ACK"
         rtd="true"
         crlf="true">
+    <action>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp="," search_in="hdr" header="Record-Route:" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" occurence="2" check_it_inverse="true" assign_to="dummy"/>
+      <!-- there should only be no Route header -->
+      <ereg regexp=".+" start_line="true" search_in="hdr" header="Route:" check_it_inverse="true" assign_to="dummy"/>
+    </action>
   </recv>
 
   <recv request="BYE" crlf="true" rrs="true">
+    <action>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp="," search_in="hdr" header="Record-Route:" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" occurence="2" check_it_inverse="true" assign_to="dummy"/>
+      <!-- there should only be no Route header -->
+      <ereg regexp=".+" start_line="true" search_in="hdr" header="Route:" check_it_inverse="true" assign_to="dummy"/>
+    </action>
   </recv>
 
   <send retrans="500">
@@ -115,7 +136,7 @@
       SIP/2.0 200 OK
       [last_Via:]
       [last_From:]
-      [last_To:];tag=[service].[call_number]
+      [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
       [last_Record-Route:]
@@ -139,5 +160,7 @@
 
   <!-- definition of the call length repartition table (unit is ms)     -->
   <CallLengthRepartition value="500, 1000, 2000, 3000"/>
+
+  <Reference variables="dummy"/>
 
 </scenario>

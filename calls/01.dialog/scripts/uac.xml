@@ -42,6 +42,14 @@
   <!-- are saved and used for following messages sent. Useful to test   -->
   <!-- against stateful SIP proxies/B2BUAs.                             -->
   <recv response="200" rtd="true" rrs="true">
+    <action>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" check_it="true" assign_to="dummy"/>
+      <!-- there should only be one Record-Route -->
+      <ereg regexp="," search_in="hdr" header="Record-Route:" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp=".+" search_in="hdr" header="Record-Route:" occurence="2" check_it_inverse="true" assign_to="dummy"/>
+      <!-- there should only be no Route header -->
+      <ereg regexp=".+" start_line="true" search_in="hdr" header="Route:" check_it_inverse="true" assign_to="dummy"/>
+    </action>
   </recv>
 
   <!-- Packet lost can be simulated in any send/recv message by         -->
@@ -97,5 +105,7 @@
 
   <!-- definition of the call length repartition table (unit is ms)     -->
   <CallLengthRepartition value="500"/>
+
+  <Reference variables="dummy"/>
 
 </scenario>
