@@ -111,6 +111,22 @@ password.
 Same as [04.password-db-proxy-domain](#04password-db-proxy-domain), but checks
 the ha1 password.
 
+### Record Route
+
+Places calls without using the Record-Route mechanism. Checks are being
+performed at the (SIPP) UAC/UAS level, ensuring the traffic completes as
+expected and validating the Route and Record-Route headers.
+
+#### 01.record-route
+
+Places a call and validates it establishes correctly.
+
+#### 02.record-route-protocols
+
+Similar to [01.record-route](01record-route), but establishes a call for two
+UAs that are using different protocols (i.e. UDP vs TCP), using double
+Record-Routing.
+
 ### Dialog
 
 Checks call using dialog support.
