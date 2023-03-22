@@ -190,6 +190,10 @@ Contact username, rather than in the URI param.
 Similar to [03.th-dialog](#03th-dialog), but changes the Call-ID of
 the UAS leg.
 
+#### 07.th-b2b
+
+Simiar to [01.th-no-dialog](#01th-no-dialog) and [01.th-dialog](01.th-dialog)
+but performs the tests going through the B2B engine.
 
 ## Execution
 
