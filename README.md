@@ -153,6 +153,44 @@ Similar to [02.pinging](#02pinging), but checks that re-INVITE pinging is workin
 
 Similar to [01.dialog](#01simple), but expires the dialog before a BYE is received.
 
+### Topology Hiding
+
+Runs a set of calls using the topology hiding scenario, verifying that the UAS
+are seeing only the next hop (OpenSIPS) in their signaling.
+
+#### 01.th-no-dialog
+
+Performs a call using topology hiding without dialog support. Verifies that:
+1. UAs are only seeing next hop
+2. Routing is correctly done
+3. Topology hiding information is present in the Route and Record-Route headers
+
+#### 02.th-no-dialog-username
+
+Similar to [01.th-no-dialog](#01th-no-dialog), but passes the username in the
+Contact header.
+
+#### 03.th-dialog
+
+Similar to [01.th-no-dialog](#01th-no-dialog), but uses the dialog module to
+store topology hiding information.
+
+#### 04.th-dialog-username
+
+Similar to [03.th-dialog](#03th-dialog), but propagates the username
+in the Contact header.
+
+#### 05.th-dialog-did
+
+Similar to [03.th-dialog](#03th-dialog), but pushes the dialog id in the
+Contact username, rather than in the URI param.
+
+#### 06.th-dialog-callid
+
+Similar to [03.th-dialog](#03th-dialog), but changes the Call-ID of
+the UAS leg.
+
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
