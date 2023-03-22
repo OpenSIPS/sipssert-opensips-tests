@@ -1,0 +1,71 @@
+---
+timeout: 40
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+    label: mysql
+    ready:
+      wait: 10
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: SIPP UAS
+    type: uas-sipp
+    username: {{ username }}
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    duration: 3000 # duration after OPTIONS
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  - name: MI check active
+    type: opensips-cli
+    script: scripts/check-dialog.py
+    args: active
+    require:
+      started:
+        task: SIPP UAC
+        wait: 2
+
+  # dialog should be flushed in DB after 2s the call is answered
+  - name: MySQL check active
+    type: mysql-client
+    script: scripts/mysql-dialog.sh
+    args: active
+    require:
+      started:
+        task: SIPP UAC
+        wait: 5
+
+  # dialog should be deleted after SIPP finishes
+  - name: MI check deleted
+    type: opensips-cli
+    script: scripts/check-dialog.py
+    args: deleted
+    require: SIPP UAC
+
+  # Dialog should dissapear from DB 2s after SIPP finishes
+  - name: MySQL check deleted
+    type: mysql-client
+    script: scripts/mysql-dialog.sh
+    args: deleted
+    require:
+      after:
+        task: SIPP UAC
+        wait: 3

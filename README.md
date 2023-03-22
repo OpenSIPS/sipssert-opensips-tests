@@ -125,6 +125,18 @@ Performs a call with dialog support and stored in MySQL database. Verification s
 5. We check the call as been removed from the database
 6. SIPP scenarios check the Record-Route headers are present and no Route
 
+#### 02.pinging
+
+Similar to [01.dialog](#01simple), but checks that OPTIONS pinging is working.
+
+#### 03.reinvite-pinging
+
+Similar to [02.pinging](#02pinging), but checks that re-INVITE pinging is working.
+
+#### 04.expire
+
+Similar to [01.dialog](#01simple), but expires the dialog before a BYE is received.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
