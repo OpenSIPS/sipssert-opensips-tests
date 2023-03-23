@@ -5,7 +5,7 @@ tasks:
   - name: MySQL Server
     type: mysql
     ready:
-      wait: 10
+      wait: 12
 
   - name: OpenSIPS
     type: opensips
