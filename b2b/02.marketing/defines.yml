@@ -1,0 +1,7 @@
+---
+media_ip: 192.168.52.5
+media_port: 5065
+caller_ip: 192.168.52.6
+caller_port: 5066
+operator_ip: 192.168.52.7
+operator_port: 5067

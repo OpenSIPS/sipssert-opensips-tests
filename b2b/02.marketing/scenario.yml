@@ -1,0 +1,52 @@
+---
+timeout: 20
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: SIPP Media
+    type: uas-sipp
+    config_file: scripts/media.xml
+    duration: 2000
+    require: OpenSIPS
+    ip: {{ media_ip }}
+    port: {{ media_port }}
+
+  - name: SIPP Caller
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    duration: 5000 # after the announcement is made
+    require: OpenSIPS
+    ip: {{ caller_ip }}
+    port: {{ caller_port }}
+
+  - name: SIPP Operator
+    type: uas-sipp
+    config_file: scripts/operator.xml
+    ip: {{ operator_ip }}
+    port: {{ operator_port }}
+
+  - name: Place Call
+    type: opensips-cli
+    args:
+      - -x
+      - mi
+      - b2b_trigger_scenario
+      - marketing
+      - customer,sip:customer@{{ caller_ip }}:{{ caller_port }}
+      - media,sip:announcement@{{ media_ip }}:{{ media_port }}
+      - operator_uri=sip:operator@{{ operator_ip }}:{{ operator_port }}
+    require:
+      - started:
+          task: SIPP Caller
+          wait: 0.5
+      - started:
+          task: SIPP Media
+          wait: 0.5
+      - started:
+          task: SIPP Operator
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5

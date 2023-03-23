@@ -195,6 +195,26 @@ the UAS leg.
 Simiar to [01.th-no-dialog](#01th-no-dialog) and [01.th-dialog](01.th-dialog)
 but performs the tests going through the B2B engine.
 
+### B2B
+
+Runs a set of tests against common B2B scenarios, verifying that the SIP flows
+complete correctly.
+
+#### 01.prepaid
+Performs the Prepaid scenario, and checks that calls are properly executed.
+
+#### 02.marketing
+Performs the Marketing B2B scenario, and checks that the two entities are
+executed according to the desired flow and scenario.
+
+#### 03.refer-unattended-uac
+Runs the REFER/unattended transfer scenario, triggering the transfer from the
+UAC side.
+
+#### 04.refer-unattended-uas
+Same as [03.refer-unattended-uac](03refer-unattended-uac), but transfers from
+the UAS side.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
