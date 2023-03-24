@@ -215,6 +215,57 @@ UAC side.
 Same as [03.refer-unattended-uac](03refer-unattended-uac), but transfers from
 the UAS side.
 
+#### 05.refer-unattended-uac-fail
+Same as [03.refer-unattended-uac](03refer-unattended-uac), but the transfer
+fails, checking that all the entities are properly removed.
+
+#### 06.refer-unattended-uas-fail
+Same as [05.refer-unattended-uac-fail](05refer-unattended-uac-fail), but the
+transfer is attempted from the UAS side.
+
+#### 07.refer-unattended-uac-notify
+Same as [04.refer-unattended-uac](03refer-unattended-uac), but enables RFC3515
+NOTIFYs.
+
+#### 08.refer-unattended-uas-notify
+Same as [04.refer-unattended-uas](04refer-unattended-uas), but enables RFC3515
+NOTIFYs.
+
+#### 09.refer-unattended-uac-notify-fail
+Attempts a call transfer, but fails, checking that the call remains alive.
+
+#### 10.refer-unattended-uas-notify-fail
+Same as
+[09.refer-unattended-uac-notify-fail](09refer-unattended-uac-notify-fail), but
+tries to transfer from UAS, which fails, then checks that the call remains
+alive.
+
+#### 11.refer-unattended-uac-prov
+Same as [03.refer-unattended-uac](03refer-unattended-uac), but provides a
+provisional media to the remaining participant.
+
+#### 12.refer-unattended-uas-prov
+Same as [04.refer-unattended-uas](04refer-unattended-uac), but provides a
+provisional media to the remaining participant.
+
+#### 13.refer-unattended-uac-prov-fail
+Same as [03.refer-unattended-uac](03refer-unattended-uac), but provides a
+provisional media to the remaining participant, and the transfer fails.
+
+#### 14.refer-unattended-uas-prov-fail
+Same as [04.refer-unattended-uas](04refer-unattended-uac), but provides a
+provisional media to the remaining participant, and the transfer fails.
+
+#### 15.refer-unattended-uac-prov-notify-fail
+Same as
+[09.refer-unattended-uac-notify-fail](09refer-unattended-uac-notify-fail), but
+provides a provisional media to the remaining participant.
+
+#### 16.refer-unattended-uas-prov-notify-fail
+Same as
+[10.refer-unattended-uas-notify-fail](10refer-unattended-uas-notify-fail), but
+provides a provisional media to the remaining participant.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.

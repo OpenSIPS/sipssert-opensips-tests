@@ -1,0 +1,5 @@
+---
+transfer_ip: 192.168.52.5
+transfer_port: 5065
+media_ip: 192.168.52.6
+media_port: 5066

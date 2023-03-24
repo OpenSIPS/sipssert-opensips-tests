@@ -1,0 +1,44 @@
+---
+timeout: 20
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: SIPP Media
+    type: uas-sipp
+    config_file: scripts/media.xml
+    ip: {{ media_ip }}
+    port: {{ media_port }}
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    config_file: scripts/uac.xml
+    duration: 2000 # before and after transfer
+    username: {{ username }}
+    remote: {{ uas_ip }}:{{ uas_port }}
+    require:
+      started:
+        task: SIPP UAS
+        wait: 0.5
+    keys:
+      transfer: sip:transfer@{{ transfer_ip }}:{{ transfer_port }}
+
+  - name: SIPP Transfer
+    type: uas-sipp
+    config_file: scripts/transfer.xml
+    ip: {{ transfer_ip }}
+    port: {{ transfer_port }}
+    require:
+      - started:
+          task: SIPP UAC
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
