@@ -8,10 +8,7 @@ tasks:
   - name: SIPP UAS
     type: uas-sipp
     config_file: scripts/uas.xml
-    duration: 2000 # before transfer
     require: OpenSIPS
-    keys:
-      transfer: sip:transfer@{{ transfer_ip }}:{{ transfer_port }}
 
   - name: SIPP Media
     type: uas-sipp
@@ -24,7 +21,7 @@ tasks:
     type: uac-sipp
     config_file: scripts/uac.xml
     username: {{ username }}
-    duration: 5000 # after reINVITE/transfer
+    duration: 4000 # after reINVITE/transfer
     remote: {{ uas_ip }}:{{ uas_port }}
     require:
       started:
@@ -43,3 +40,15 @@ tasks:
       - after:
           task: OpenSIPS
           wait: 0.5
+
+  - name: MI transfer
+    type: opensips-cli
+    script: scripts/transfer.py
+    args:
+      - sip:transfer@{{ transfer_ip }}:{{ transfer_port }}
+      - 0
+      - sip:ringing@{{ media_ip }}:{{ media_port }}
+    require:
+      started:
+        task: SIPP UAC
+        wait: 3

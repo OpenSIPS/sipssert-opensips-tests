@@ -266,6 +266,22 @@ Same as
 [10.refer-unattended-uas-notify-fail](10refer-unattended-uas-notify-fail), but
 provides a provisional media to the remaining participant.
 
+#### 17.refer-unattended-uac-mi
+Same as [03.refer-unattended-uac](03refer-unattended-uac), but the transfer is
+being triggered through MI.
+
+#### 18.refer-unattended-uas-mi
+Same as [04.refer-unattended-uas](04refer-unattended-uas), but the transfer is
+being triggered through MI.
+
+#### 19.refer-unattended-uac-prov-mi
+Same as [17.refer-unattended-uac-mi](17refer-unattended-uac-mi), but
+provides a provisional media to the remaining participant.
+
+#### 20.refer-unattended-uas-prov-mi
+Same as [18.refer-unattended-uas-mi](18refer-unattended-uas-mi), but
+provides a provisional media to the remaining participant.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
