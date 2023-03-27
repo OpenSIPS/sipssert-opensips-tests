@@ -1,10 +1,14 @@
 ---
 network_range: 192.168.52.0/24
 network_gateway: 192.168.52.254
+network_range_osbr1: 10.52.0.0/24
+network_gateway_osbr1: 10.52.0.254
 opensips_ip: 192.168.52.1
+opensips_ip_osbr1: 10.52.0.1
 opensips_port: 5060
 uac_port: 5040
 uas_ip: 192.168.52.3
+uas_ip_osbr1: 10.52.0.3
 uas_port: 5080
 mysql_ip: 192.168.52.2
 username: testing

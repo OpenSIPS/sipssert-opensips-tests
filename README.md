@@ -127,6 +127,11 @@ Similar to [01.record-route](01record-route), but establishes a call for two
 UAs that are using different protocols (i.e. UDP vs TCP), using double
 Record-Routing.
 
+#### 03.record-route-double
+
+Similar to [01.record-route](01record-route), but establishes a call between
+two different interfaces in two different networks.
+
 ### Dialog
 
 Checks call using dialog support.

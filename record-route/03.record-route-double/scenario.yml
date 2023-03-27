@@ -1,0 +1,38 @@
+---
+timeout: 12
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+    networks:
+      - network: osbr1
+        ip: {{ opensips_ip_osbr1 }}
+    sockets:
+      - udp:{{ opensips_ip_osbr1 }}:{{ opensips_port }}
+
+  - name: SIPP UAS
+    type: uas-sipp
+    username: {{ username }}
+    config_file: scripts/uas.xml
+    ip: {{ uas_ip_osbr1 }}
+    network: osbr1
+    require: OpenSIPS
+    keys:
+      double_domain: {{ opensips_ip_osbr1 }}
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip_osbr1 }}:{{ uas_port }}
+    keys:
+      double_domain: {{ opensips_ip_osbr1 }}
+    caller: caller
+    duration: 4000
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
