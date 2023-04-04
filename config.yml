@@ -26,6 +26,7 @@ defaults:
     mi_ip: {{ opensips_ip }}
   opensips:
     ip: {{ opensips_ip }}
+    image: opensips/opensips:sipssert
     socket: udp:{{ opensips_ip }}:{{ opensips_port }}
     stop_timeout: 5
   mysql:
