@@ -123,13 +123,13 @@ Places a call and validates it establishes correctly.
 
 #### 02.record-route-protocols
 
-Similar to [01.record-route](01record-route), but establishes a call for two
+Similar to [01.record-route](#01record-route), but establishes a call for two
 UAs that are using different protocols (i.e. UDP vs TCP), using double
 Record-Routing.
 
 #### 03.record-route-double
 
-Similar to [01.record-route](01record-route), but establishes a call between
+Similar to [01.record-route](#01record-route), but establishes a call between
 two different interfaces in two different networks.
 
 ### Dialog
@@ -197,7 +197,7 @@ the UAS leg.
 
 #### 07.th-b2b
 
-Simiar to [01.th-no-dialog](#01th-no-dialog) and [01.th-dialog](01.th-dialog)
+Simiar to [01.th-no-dialog](#01th-no-dialog) and [01.th-dialog](#01.th-dialog)
 but performs the tests going through the B2B engine.
 
 ### B2B
@@ -217,23 +217,23 @@ Runs the REFER/unattended transfer scenario, triggering the transfer from the
 UAC side.
 
 #### 04.refer-unattended-uas
-Same as [03.refer-unattended-uac](03refer-unattended-uac), but transfers from
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but transfers from
 the UAS side.
 
 #### 05.refer-unattended-uac-fail
-Same as [03.refer-unattended-uac](03refer-unattended-uac), but the transfer
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but the transfer
 fails, checking that all the entities are properly removed.
 
 #### 06.refer-unattended-uas-fail
-Same as [05.refer-unattended-uac-fail](05refer-unattended-uac-fail), but the
+Same as [05.refer-unattended-uac-fail](#05refer-unattended-uac-fail), but the
 transfer is attempted from the UAS side.
 
 #### 07.refer-unattended-uac-notify
-Same as [04.refer-unattended-uac](03refer-unattended-uac), but enables RFC3515
+Same as [04.refer-unattended-uac](#03refer-unattended-uac), but enables RFC3515
 NOTIFYs.
 
 #### 08.refer-unattended-uas-notify
-Same as [04.refer-unattended-uas](04refer-unattended-uas), but enables RFC3515
+Same as [04.refer-unattended-uas](#04refer-unattended-uas), but enables RFC3515
 NOTIFYs.
 
 #### 09.refer-unattended-uac-notify-fail
@@ -241,50 +241,50 @@ Attempts a call transfer, but fails, checking that the call remains alive.
 
 #### 10.refer-unattended-uas-notify-fail
 Same as
-[09.refer-unattended-uac-notify-fail](09refer-unattended-uac-notify-fail), but
+[09.refer-unattended-uac-notify-fail](#09refer-unattended-uac-notify-fail), but
 tries to transfer from UAS, which fails, then checks that the call remains
 alive.
 
 #### 11.refer-unattended-uac-prov
-Same as [03.refer-unattended-uac](03refer-unattended-uac), but provides a
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but provides a
 provisional media to the remaining participant.
 
 #### 12.refer-unattended-uas-prov
-Same as [04.refer-unattended-uas](04refer-unattended-uac), but provides a
+Same as [04.refer-unattended-uas](#04refer-unattended-uac), but provides a
 provisional media to the remaining participant.
 
 #### 13.refer-unattended-uac-prov-fail
-Same as [03.refer-unattended-uac](03refer-unattended-uac), but provides a
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but provides a
 provisional media to the remaining participant, and the transfer fails.
 
 #### 14.refer-unattended-uas-prov-fail
-Same as [04.refer-unattended-uas](04refer-unattended-uac), but provides a
+Same as [04.refer-unattended-uas](#04refer-unattended-uac), but provides a
 provisional media to the remaining participant, and the transfer fails.
 
 #### 15.refer-unattended-uac-prov-notify-fail
 Same as
-[09.refer-unattended-uac-notify-fail](09refer-unattended-uac-notify-fail), but
+[09.refer-unattended-uac-notify-fail](#09refer-unattended-uac-notify-fail), but
 provides a provisional media to the remaining participant.
 
 #### 16.refer-unattended-uas-prov-notify-fail
 Same as
-[10.refer-unattended-uas-notify-fail](10refer-unattended-uas-notify-fail), but
+[10.refer-unattended-uas-notify-fail](#10refer-unattended-uas-notify-fail), but
 provides a provisional media to the remaining participant.
 
 #### 17.refer-unattended-uac-mi
-Same as [03.refer-unattended-uac](03refer-unattended-uac), but the transfer is
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but the transfer is
 being triggered through MI.
 
 #### 18.refer-unattended-uas-mi
-Same as [04.refer-unattended-uas](04refer-unattended-uas), but the transfer is
+Same as [04.refer-unattended-uas](#04refer-unattended-uas), but the transfer is
 being triggered through MI.
 
 #### 19.refer-unattended-uac-prov-mi
-Same as [17.refer-unattended-uac-mi](17refer-unattended-uac-mi), but
+Same as [17.refer-unattended-uac-mi](#17refer-unattended-uac-mi), but
 provides a provisional media to the remaining participant.
 
 #### 20.refer-unattended-uas-prov-mi
-Same as [18.refer-unattended-uas-mi](18refer-unattended-uas-mi), but
+Same as [18.refer-unattended-uas-mi](#18refer-unattended-uas-mi), but
 provides a provisional media to the remaining participant.
 
 ## Execution
