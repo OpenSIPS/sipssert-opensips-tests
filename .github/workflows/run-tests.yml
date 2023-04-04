@@ -1,0 +1,34 @@
+name: Run OpenSIPS Conformance Tests
+
+on:
+  # Triggers the workflow on all push or pull request events
+  push:
+  pull_request:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout SIPssert repo
+      uses: actions/checkout@v3
+      with:
+        repository: 'OpenSIPS/SIPssert'
+        path: sipssert
+
+    - name: Install SIPssert
+      run: |
+        cd sipssert && python3 setup.py install
+
+    - name: Checkout Tests repo
+      uses: actions/checkout@v3
+      with:
+        path: tests
+
+    - name: Execute Tests
+      run: |
+        sipssert tests/*
+
