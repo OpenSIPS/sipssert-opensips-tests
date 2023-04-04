@@ -21,7 +21,7 @@ jobs:
 
     - name: Install SIPssert
       run: |
-        cd sipssert && python3 setup.py install
+        cd sipssert && python3 setup.py install --user clean
 
     - name: Checkout Tests repo
       uses: actions/checkout@v3
