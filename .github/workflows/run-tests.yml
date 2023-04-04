@@ -30,5 +30,4 @@ jobs:
 
     - name: Execute Tests
       run: |
-        sipssert tests/*
-
+        ./run-all.sh
