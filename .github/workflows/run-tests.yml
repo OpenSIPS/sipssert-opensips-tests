@@ -30,4 +30,4 @@ jobs:
 
     - name: Execute Tests
       run: |
-        ./run-all.sh
+        cd tests && ./run-all.sh
