@@ -4,8 +4,6 @@ timeout: 30
 tasks:
   - name: MySQL Server
     type: mysql
-    ready:
-      wait: 10
 
   - name: OpenSIPS
     type: opensips
