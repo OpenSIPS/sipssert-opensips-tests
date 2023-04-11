@@ -191,7 +191,6 @@
     ]]>
   </send>
 
-  <!-- XXX: after the Transfer fails, I would have expected a re-negociation -->
   <recv request="INVITE" crlf="true" rrs="true">
     <action>
       <!-- there should only be one Via -->

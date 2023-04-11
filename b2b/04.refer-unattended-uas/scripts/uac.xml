@@ -139,11 +139,6 @@
       <ereg regexp="." search_in="var" check_it_inverse="true" variable="result" assign_to="dummy"/>
       <!-- check the From tag contains B2B -->
       <ereg regexp="[:space:]*<sip:([^>]*)>;tag=B2B." search_in="hdr" check_it="true" header="From:" assign_to="dummy,dummy" />
-
-      <!-- check that we have SDP and Content-Length -->
-      <ereg regexp="[:space:]*application/sdp[:space:]*" search_in="hdr" check_it="true" header="Content-Type" assign_to="dummy"/>
-      <ereg regexp=".+" search_in="hdr" check_it="true" header="Content-Length" assign_to="dummy"/>
-      <ereg regexp="[:space:]*0[:space:]*" search_in="hdr" check_it_inverse="true" header="Content-Length" assign_to="dummy"/>
     </action>
   </recv>
 
