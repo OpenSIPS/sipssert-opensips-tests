@@ -287,6 +287,25 @@ provides a provisional media to the remaining participant.
 Same as [18.refer-unattended-uas-mi](#18refer-unattended-uas-mi), but
 provides a provisional media to the remaining participant.
 
+#### 21.refer-unattended-uac-hold
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but
+puts the remaining participant on hold first.
+
+#### 22.refer-unattended-uac-no-late
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but does not
+use late SDP with the new participant.
+
+#### 23.refer-unattended-uac-no-late-prov
+Same as [22.refer-unattended-uac-no-late](#22refer-unattended-uac-no-late), but
+provides a provisional media to the remaining participant.
+
+#### 24.refer-unattended-uac-retry
+Same as [03.refer-unattended-uac](#03refer-unattended-uac), but the transfer
+fails and the remaining participant is bridged with a new destination.
+
+#### 24.top-hiding
+Runs the internal topology hiding scenario.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
