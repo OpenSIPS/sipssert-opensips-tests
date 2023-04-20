@@ -45,4 +45,4 @@ jobs:
       if: always()
       with:
         name: sipssert-logs
-        path: tests/sipssert-logs.tar.gz
+        path: sipssert-logs.tar.gz
