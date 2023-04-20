@@ -29,16 +29,12 @@ jobs:
         path: tests
 
     - name: Run All Tests
-      working-directory: tests
-      run: ./run-all.sh --test 01.record-route
+      working-directory: sipssert
+      run: ./run-all.sh
 
-#    - name: Fetch logs
-#      uses: actions/upload-artifact@v3
-#      if: always()
-#      with:
-#        name: logs
-#        path: tests/logs/latest/
-#
-    - name: Debugging
-      working-directory: tests
-      run: pwd && ls -l && tree
+    - name: Fetch logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: logs
+        path: sipssert/logs/latest/
