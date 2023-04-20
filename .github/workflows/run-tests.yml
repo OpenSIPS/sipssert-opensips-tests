@@ -30,7 +30,7 @@ jobs:
 
     - name: Run All Tests
       working-directory: tests
-      run: ./run-all.sh --test 01.record-route
+      run: ./run-all.sh
 
     - name: Resolve logs path
       if: always()
