@@ -32,17 +32,9 @@ jobs:
       working-directory: tests
       run: ./run-all.sh --test 01.record-route
 
-    - name: Compress logs
-      uses: a7ul/tar-action@v1.1.3
-      with:
-        cwd: tests
-        command: c
-        files: logs/latest
-        outPath: sipssert-logs.tar.gz
-
     - name: Publish logs
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: sipssert-logs
-        path: sipssert-logs.tar.gz
+        path: tests/logs/latest/
