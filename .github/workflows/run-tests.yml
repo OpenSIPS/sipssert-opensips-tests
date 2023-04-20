@@ -32,9 +32,14 @@ jobs:
       working-directory: tests
       run: ./run-all.sh --test 01.record-route
 
+    - name: Resolve logs path
+      if: always()
+      working-directory: tests
+      run: echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV
+
     - name: Publish logs
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: sipssert-logs
-        path: tests/logs/latest/**
+        path: ${{ env.LOGS_PATH }}
