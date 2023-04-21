@@ -20,14 +20,26 @@ jobs:
         path: sipssert
 
     - name: Install SIPssert
-      run: |
-        cd sipssert && python3 setup.py install --user clean
+      working-directory: sipssert
+      run: python3 setup.py install --user clean
 
     - name: Checkout Tests repo
       uses: actions/checkout@v3
       with:
         path: tests
 
-    - name: Execute Tests
-      run: |
-        cd tests && ./run-all.sh
+    - name: Run All Tests
+      working-directory: tests
+      run: ./run-all.sh
+
+    - name: Resolve logs path
+      if: always()
+      working-directory: tests
+      run: echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV
+
+    - name: Publish logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: sipssert-logs
+        path: ${{ env.LOGS_PATH }}
