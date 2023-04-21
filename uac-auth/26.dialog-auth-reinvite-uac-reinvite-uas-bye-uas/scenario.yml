@@ -1,0 +1,35 @@
+---
+timeout: 15
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    duration: 2000
+    keys:
+      username: {{ username }}
+      password: {{ password }}
+      nonce: {{ nonce }}
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: {{ username }}
+    duration: 2000
+    keys:
+      username: {{ username }}
+      password: {{ password }}
+      nonce: {{ nonce }}
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5

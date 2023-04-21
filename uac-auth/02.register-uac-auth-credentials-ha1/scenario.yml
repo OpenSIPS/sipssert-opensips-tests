@@ -1,0 +1,27 @@
+---
+timeout: 10
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: Registrar
+    type: uas-sipp
+    keys:
+      username: {{ username }}
+      password: {{ password }}
+      nonce: {{ nonce }}
+    config_file: scripts/sipp-registrar.xml
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    remote: {{ uas_ip }}:{{ uas_port }}
+    config_file: scripts/sipp-register.xml
+    require:
+      - started:
+          task: OpenSIPS
+          wait: 0.5
+      - started:
+          task: Registrar
+          wait: 0.5
