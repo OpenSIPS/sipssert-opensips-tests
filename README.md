@@ -287,6 +287,134 @@ provides a provisional media to the remaining participant.
 Same as [18.refer-unattended-uas-mi](#18refer-unattended-uas-mi), but
 provides a provisional media to the remaining participant.
 
+### UAC Auth
+
+Verifies the behavior of uac_auth module.
+
+#### 01.register-uac-auth-credentials-plain
+Registers using the uac_auth module with credentials provided in plain text.
+
+#### 02.register-uac-auth-credentials-ha1
+Same as
+[01.register-uac-auth-credentials-plain](#01register-uac-auth-credentials-plain),
+but uses the credentials stored in the ha1 format.
+
+#### 03.register-uac-auth-avp-plain
+Same as
+[01.register-uac-auth-credentials-plain](#01register-uac-auth-credentials-plain),
+but takes the credentials in plain text through script AVPs.
+
+#### 04.register-uac-auth-avp-ha1
+Same as
+[01.register-uac-auth-credentials-plain](#01register-uac-auth-credentials-plain),
+but takes the credentials in ha1 format through script AVPs.
+
+#### 05.register-uac-auth-int-credentials-plain
+Same as
+[01.register-uac-auth-credentials-plain](#01register-uac-auth-credentials-plain),
+but uses authentication integrity (`auth-int`) for quality of protection
+(`qop`).
+
+#### 06.register-uac-auth-int-credentials-ha1
+Same as
+[02.register-uac-auth-credentials-ha1](#02register-uac-auth-credentials-ha1),
+but uses authentication integrity (`auth-int`) for quality of protection
+(`qop`).
+
+#### 07.register-uac-auth-int-avp-plain
+Same as
+[03.register-uac-auth-avp-plain](#03register-uac-auth-avp-plain),
+but uses authentication integrity (`auth-int`) for quality of protection
+(`qop`).
+
+#### 08.register-uac-auth-int-credentials-ha1
+Same as
+[04.register-uac-auth-avp-ha1](#04register-uac-auth-avp-ha1),
+but uses authentication integrity (`auth-int`) for quality of protection
+(`qop`).
+
+#### 09.register-uac-auth-auth-int-credentials-plain
+Same as
+[01.register-uac-auth-credentials-plain](#01register-uac-auth-credentials-plain), and
+[05.register-uac-auth-int-credentials-plain](#05register-uac-auth-int-credentials-plain),
+but server supports both authentication (`auth`) and uses authentication
+integrity (`auth-int`) for quality of protection (`qop`).
+
+#### 10.register-uac-auth-auth-int-credentials-ha1
+Same as
+[02.register-uac-auth-credentials-ha1](#02register-uac-auth-credentials-ha1), and
+[06.register-uac-auth-int-credentials-ha1](#06register-uac-auth-int-credentials-ha1),
+but server supports both authentication (`auth`) and uses authentication
+integrity (`auth-int`) for quality of protection (`qop`).
+
+#### 11.register-uac-auth-auth-int-avp-plain
+Same as
+[03.register-uac-auth-avp-plain](#03register-uac-auth-avp-plain), and
+[07.register-uac-auth-int-avp-plain](#07register-uac-auth-int-avp-plain),
+but server supports both authentication (`auth`) and uses authentication
+integrity (`auth-int`) for quality of protection (`qop`).
+
+#### 12.register-uac-auth-auth-int-credentials-ha1
+Same as
+[04.register-uac-auth-avp-ha1](#04register-uac-auth-avp-ha1), and
+[08.register-uac-auth-int-avp-ha1](#08register-uac-auth-int-avp-ha1),
+but server supports both authentication (`auth`) and uses authentication
+integrity (`auth-int`) for quality of protection (`qop`).
+
+#### 13.rr-auth-invite-uas
+Places a call where the UAS authenticates for the initial INVITE.
+
+#### 14.rr-auth-bye-uas
+Places a call where the UAS authenticates for the in-dialog BYE.
+
+#### 15.rr-auth-bye-uac
+Places a call where the UAC authenticates for the in-dialog BYE.
+
+#### 16.dialog-auth-invite-uas
+Same as
+[13.rr-auth-invite-uas](#13.rr-auth-invite-uas), but authentication changes
+are stored in dialog.
+
+#### 17.dialog-auth-reinvite-uas
+Places a call where the UAS authenticates for the in-dialog reINVITE.
+
+#### 18.dialog-auth-bye-uas
+Places a call where the UAS authenticates for the in-dialog BYE.
+
+#### 19.dialog-auth-invite-bye-uas
+Places a call where the UAS authenticates the initial INVITE and the BYE
+messages.
+
+#### 20.dialog-auth-invite-reinvite-bye-uas
+Places a call where the UAS authenticates the initial INVITE, reINVITE and the
+BYE messages.
+
+#### 21.dialog-auth-bye-uac
+Places a call where the UAC authenticates for the in-dialog BYE.
+
+#### 22.dialog-auth-reinvite-uac
+Places a call where the UAC authenticates for the in-dialog reINVITE.
+
+#### 23.dialog-auth-reinvite-bye-uac
+Places a call where the UAC authenticates for both in-dialog reINVITE and BYE.
+
+#### 24.dialog-auth-reinvite-uac-reinvite-uas
+Places a call where both UAC and UAS authenticates for the in-dialog reINVITE.
+
+#### 25.dialog-auth-reinvite-uas-reinvite-uac
+Same as
+[24.dialog-auth-reinvite-uac-reinvite-uas](#24dialog-auth-reinvite-uac-reinvite-uas),
+but reINVITEs are sent in reversed order.
+
+#### 26.dialog-auth-reinvite-uac-reinvite-uas-bye-uas
+Places a call where both UAC and UAS authenticates for the in-dialog reINVITE
+and the BYE is authenticated by the UAS.
+
+#### 27.dialog-auth-reinvite-uac-reinvite-uas-bye-uac
+Same as
+[26.dialog-auth-reinvite-uac-reinvite-uas-bye-uas](#26dialog-auth-reinvite-uac-reinvite-uas-bye-uas),
+but BYE is authenticated by the UAC.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
