@@ -434,6 +434,19 @@ Same as
 [26.dialog-auth-reinvite-uac-reinvite-uas-bye-uas](#26dialog-auth-reinvite-uac-reinvite-uas-bye-uas),
 but BYE is authenticated by the UAC.
 
+### Stir and shaken
+
+#### 01.auth-simple
+A basic stir and shaken authentication<br>
+It use a compatible Self-Signed STIR/SHAKEN Certificate [(info here)](https://blog.opensips.org/2022/10/31/how-to-generate-self-signed-stir-shaken-certificates)<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
+:warning: This scenario use a specific version of [opensips-cli](https://hub.docker.com/r/allomediadocker/opensips-cli)
+
+#### 02.auth-diverted-cached
+Same as
+[01.auth-simple](#01auth-simple), but add processing of Diversion header, public key caching, store private key in separate file
+:warning: Scenario for French recommendations
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
