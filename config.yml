@@ -24,12 +24,9 @@ defaults:
       domain: {{ opensips_ip }}
   opensips-cli:
     mi_ip: {{ opensips_ip }}
-    image: allomediadocker/opensips-cli:{% if opensips_version is defined %}{{ opensips_version }}{% endif %}
   opensips:
     ip: {{ opensips_ip }}
-    #image: opensips/opensips:sipssert{% if opensips_version is defined %}-{{ opensips_version }}{% endif %}
-    image: allomediadocker/opensips:{% if opensips_version is defined %}{{ opensips_version }}{% endif %}
-    mount_point: /usr/local/etc/opensips
+    image: opensips/opensips:sipssert{% if opensips_version is defined %}-{{ opensips_version }}{% endif %}
     socket: udp:{{ opensips_ip }}:{{ opensips_port }}
     stop_timeout: 5
   mysql:
