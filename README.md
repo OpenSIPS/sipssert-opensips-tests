@@ -445,7 +445,12 @@ It use a compatible Self-Signed STIR/SHAKEN Certificate [(info here)](https://bl
 #### 02.auth-diverted-cached
 Same as
 [01.auth-simple](#01auth-simple), but add processing of Diversion header, public key caching, store private key in separate file
-:warning: Scenario for French recommendations
+:warning: Scenario for French regulations
+
+#### 03.auth-issue-bypass-token
+Same as
+[01.auth-simple](#01auth-simple), $var(cert) deleted to force stir_shaken_auth function in error and automatically add P-Identity-Bypass header. 
+:warning: Scenario for French regulations
 
 ## Execution
 
