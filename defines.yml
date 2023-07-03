@@ -15,4 +15,3 @@ mysql_ready_timeout: 15
 username: testing
 password: T3st|n6
 nonce: 035cf70b1c4fcf4731150330410151743443
-opensips_version: 3.3.4

@@ -37,6 +37,7 @@ tasks:
   # check identity header after call
   - name: MI check identity header
     type: opensips-cli
+    image: allomediadocker/opensips-cli:3.3.4
     script: scripts/check-identity.py
     require:
       after:
