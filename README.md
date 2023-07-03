@@ -1,4 +1,4 @@
-[![OpenSIPS 3.3](https://github.com/OpenSIPS/sipssert-opensips-tests/actions/workflows/run-tests.yml/badge.svg?branch=3.3)](https://github.com/OpenSIPS/sipssert-opensips-tests/actions/workflows/run-tests.yml)
+[![OpenSIPS 3.3 Conformance Tests](https://github.com/OpenSIPS/sipssert-opensips-tests/actions/workflows/run-tests.yml/badge.svg?branch=3.3)](https://github.com/OpenSIPS/sipssert-opensips-tests/actions/workflows/run-tests.yml)
 
 # OpenSIPS Tests
 
