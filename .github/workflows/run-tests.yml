@@ -1,4 +1,4 @@
-name: OpenSIPS 3.5 Conformance Tests
+name: OpenSIPS 3.4 Conformance Tests
 
 on:
   # Triggers the workflow on all push or pull request events
