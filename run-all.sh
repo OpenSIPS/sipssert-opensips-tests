@@ -18,7 +18,8 @@ SETS=${SETS:-registration \
 	dialog \
 	topology-hiding \
 	b2b \
-	uac-auth}
+	uac-auth \
+	stir-shaken}
 
 sipssert \
 	$PARAMS \
