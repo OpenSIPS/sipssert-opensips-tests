@@ -18,9 +18,15 @@ if action == "expired":
         print("Number of contacts is {}".format(l))
         sys.exit(1)
     expires = out['Domains'][0]['AORs'][0]['Contacts'][0]['Expires']
-    if expires != "expired":
-        print("Expires is {}".format(expires))
-        sys.exit(2)
+    try:
+        expires = int(expires)
+        if expires != 0:
+            print("Expires is {}".format(expires))
+            sys.exit(3)
+    except ValueError:
+        if expires != "expired":
+            print("Expires is {}".format(expires))
+            sys.exit(4)
 else:
     if l != 1:
         print("Number of contacts is {}".format(l))
@@ -31,11 +37,11 @@ else:
         if action == "reregister":
             if expires > 5:
                 print("Expires {} is higher than 5".format(expires))
-                sys.exit(3)
+                sys.exit(5)
         else:
             if expires < 30:
                 print("Expires {} is too low".format(expires))
-                sys.exit(4)
+                sys.exit(6)
     except ValueError:
         print("Expires is {}".format(expires))
         sys.exit(2)
