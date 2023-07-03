@@ -15,7 +15,7 @@ if expired:
         print("Number of contacts is {}".format(l))
         sys.exit(1)
     expires = out['Domains'][0]['AORs'][0]['Contacts'][0]['Expires']
-    if expires != "expired":
+    if expires != "expired" and int(expires) != "0":
         print("Expires is {}".format(expires))
         sys.exit(2)
 else:
