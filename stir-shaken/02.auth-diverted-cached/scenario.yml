@@ -1,0 +1,45 @@
+---
+# generate CA: https://blog.opensips.org/2022/10/31/how-to-generate-self-signed-stir-shaken-certificates/
+
+timeout: 40
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+    label: mysql
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: SIPP UAS
+    type: uas-sipp
+    username: "+33987654321"
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: "+33987654321"
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: "+33612345678"
+    duration: 10000
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  # check identity header after call
+  - name: MI check identity header
+    type: opensips-cli
+    image: allomediadocker/opensips-cli:3.3.4
+    script: scripts/check-identity.py
+    require:
+      after:
+        task: SIPP UAC
+        wait: 0.5
