@@ -14,7 +14,7 @@ jobs:
     steps:
 
     - name: Prepare SIPssert
-      uses: sobomax/SIPssert/actions/Prepare_SIPssert@main
+      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
 
     - name: Run All Tests
-      uses: sobomax/SIPssert/actions/Run_All_Tests@main
+      uses: OpenSIPS/SIPssert/actions/Run_All_Tests@main
