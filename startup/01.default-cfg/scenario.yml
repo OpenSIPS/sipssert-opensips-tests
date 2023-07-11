@@ -1,0 +1,14 @@
+---
+timeout: 10
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: MI check PS
+    type: opensips-cli
+    script: check-ps.py
+    require:
+      after:
+        task: OpenSIPS
+        wait: 1

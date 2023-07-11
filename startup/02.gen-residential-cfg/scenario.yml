@@ -1,0 +1,19 @@
+---
+timeout: 20
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: MI check PS
+    type: opensips-cli
+    script: check-ps.py
+    require:
+      after:
+        task: OpenSIPS
+        wait: 1
