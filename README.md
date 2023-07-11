@@ -444,6 +444,8 @@ but BYE is authenticated by the UAC.
 
 ### Stir and shaken
 
+:warning: Scenarios are being created for French regulations
+
 #### 01.auth-simple
 A basic stir and shaken authentication<br>
 It use a compatible Self-Signed STIR/SHAKEN Certificate [(info here)](https://blog.opensips.org/2022/10/31/how-to-generate-self-signed-stir-shaken-certificates)<br>
@@ -453,12 +455,10 @@ It use a compatible Self-Signed STIR/SHAKEN Certificate [(info here)](https://bl
 #### 02.auth-diverted-cached
 Same as
 [01.auth-simple](#01auth-simple), but add processing of Diversion header, public key caching, store private key in separate file (more explanations in scenario's README)<br>
-:warning: Scenario for French regulations
 
 #### 03.auth-issue-bypass-token
 Same as
 [01.auth-simple](#01auth-simple), $var(cert) deleted to force stir_shaken_auth function in error and automatically add P-Identity-Bypass header. (more explanations in scenario's README)<br>
-:warning: Scenario for French regulations
 
 #### 04.verify-200
 Places a call with correct Identity header
@@ -531,18 +531,12 @@ Places a call with dest and To are different (more explanations in scenario's RE
 
 #### 27.acc-stats-200
 Places a call with correct Identity and push stats in ACC (more explanations in scenario's README)
-:warning: Scenario for French regulations<br>
-:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
 
 #### 28.acc-stats-error-403-wrong-iat
 Places a call with wrong iat token and push stats in ACC (more explanations in scenario's README)
-:warning: Scenario for French regulations<br>
-:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
 
 #### 29.acc-stats-error-403-no-kill-call
 Places a call with wrong iat token, but not kill call and push stats in ACC (more explanations in scenario's README)
-:warning: Scenario for French regulations<br>
-:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
 
 ## Execution
 
