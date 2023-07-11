@@ -10,8 +10,6 @@ tasks:
 
   - name: OpenSIPS
     type: opensips
-    image: allomediadocker/opensips:3.3.4
-    mount_point: /usr/local/etc/opensips
     require:
       ready: mysql
 
