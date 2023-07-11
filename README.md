@@ -529,6 +529,21 @@ Places a call with orig and from are different (more explanations in scenario's 
 #### 26.verify-error-438-dest-diff-to
 Places a call with dest and To are different (more explanations in scenario's README)
 
+#### 27.acc-stats-200
+Places a call with correct Identity and push stats in ACC (more explanations in scenario's README)
+:warning: Scenario for French regulations<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
+
+#### 28.acc-stats-error-403-wrong-iat
+Places a call with wrong iat token and push stats in ACC (more explanations in scenario's README)
+:warning: Scenario for French regulations<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
+
+#### 29.acc-stats-error-403-no-kill-call
+Places a call with wrong iat token, but not kill call and push stats in ACC (more explanations in scenario's README)
+:warning: Scenario for French regulations<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.
