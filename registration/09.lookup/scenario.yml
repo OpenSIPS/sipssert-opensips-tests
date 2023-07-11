@@ -1,0 +1,44 @@
+---
+timeout: 35
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: Register
+    type: uac-sipp
+    ip: {{ uas_ip }}
+    port: {{ uas_port }} 
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 0.5
+
+  - name: SIPP UAS
+    type: uas-sipp
+    username: {{ username }}
+    config_file: uas.xml
+    require:
+      - after:
+          task: Register
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    duration: 10000
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5

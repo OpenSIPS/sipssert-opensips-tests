@@ -19,6 +19,26 @@ Tests are being executed by the [SIPssert](https://github.com/OpenSIPS/sipssert)
 There are multiple tests sets available, depending on what is their main
 testing focus:
 
+### Startup
+
+Tests whether OpenSIPS starts up successfully with various configurations and settings.
+
+#### 01.default-cfg
+
+Tests OpenSIPS startup with the default sample script.
+
+#### 02.gen-residential-cfg
+
+Tests OpenSIPS startup with the menuconfig generated Residential Script.
+
+#### 03.gen-trunking-cfg
+
+Tests OpenSIPS startup with the menuconfig generated Trunking Script.
+
+#### 04.gen-loadbalancer-cfg
+
+Tests OpenSIPS startup with the menuconfig generated Load-Balancer Script.
+
 ### Registrations
 
 Performs registration tests:
@@ -75,6 +95,10 @@ Performs multiple registrations, but limit the number of contacts
 Performs multiple registrations, each one overwriting the previous one
 1. Verifies that after each iteration, there is only one contact registered
 2. Checks that each registration overwrites the next one
+
+#### 09.lookup
+
+Does a registration and then relays a call to the registerd contact.
 
 ### Authentication
 
@@ -537,6 +561,35 @@ Places a call with wrong iat token and push stats in ACC (more explanations in s
 
 #### 29.acc-stats-error-403-no-kill-call
 Places a call with wrong iat token, but not kill call and push stats in ACC (more explanations in scenario's README)
+
+### Accounting
+
+Tests accounting functionalities.
+
+#### 01.db-transaction
+
+Places a call and checks the transcation accounting information in a database backend.
+
+### Presence
+
+Tests presence functionalities.
+
+#### 01.presence
+
+Tests a basic PUBLISH-SUBSCRIBE-NOTIFY sequence for the "presence" event, using
+xml bodies.
+
+### Permissions
+
+Tests the behavior of the permissions module.
+
+#### 01.check-address
+
+Tests if a call is accepted based on the source address.
+
+#### 02.check-address-fail
+
+Tests if a call is rejected based on the source address.
 
 ## Execution
 
