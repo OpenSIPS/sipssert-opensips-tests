@@ -12,14 +12,18 @@ PARAMS=${PARAMS:---exclude topology-hiding/02.th-no-dialog-username \
 				 --exclude uac-auth/27.dialog-auth-reinvite-uac-reinvite-uas-bye-uac \
 		}
 
-SETS=${SETS:-registration \
+SETS=${SETS:-startup
+	registration \
 	auth \
 	record-route \
 	dialog \
 	topology-hiding \
 	b2b \
 	uac-auth \
-	stir-shaken}
+	stir-shaken \
+	accounting \
+	presence \
+	permissions}
 
 sipssert \
 	$PARAMS \

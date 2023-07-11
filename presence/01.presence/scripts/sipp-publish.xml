@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<scenario name="publish_scenario">
+ <Global variables="domain" />
+ <Reference variables="domain" />
+
+  <!--  First PUBLISH without Etag -->
+  <!--  Then another publish with status 'busy'
+  -->
+    <send retrans="1000">
+    <![CDATA[
+
+
+PUBLISH sip:[service]@[domain] SIP/2.0
+Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+Max-Forwards: 70
+Contact: sip:[service]@[local_ip]:[local_port]
+To: <sip:[service]@[domain]>
+From: <sip:[service]@[domain]>;tag=[call_number]
+Call-ID: [call_id]
+CSeq: 1 PUBLISH
+Expires: 60
+Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY, MESSAGE, SUBSCRIBE, INFO
+Content-Type: application/pidf+xml
+User-Agent: sipp
+Event: presence
+Content-Length: [len]
+
+<?xml version='1.0' encoding='UTF-8'?><presence xmlns='urn:ietf:params:xml:ns:pidf' xmlns:dm='urn:ietf:params:xml:ns:pidf:data-model' xmlns:rpid='urn:ietf:params:xml:ns:pidf:rpid' xmlns:c='urn:ietf:params:xml:ns:pidf:cipid' entity='sip:[service]@[domain]'><tuple id='t532d494f'><status><basic>open</basic></status></tuple><dm:person id='p98169736'><rpid:activities><rpid:unknown/></rpid:activities></dm:person></presence>
+]]>
+  </send>
+
+  <recv response="200" rtd="true">
+    <action>
+        <!-- Save the ETag value in [$3] -->
+        <ereg regexp=".*"
+              search_in="hdr"
+              header="SIP-ETag:"
+              check_it="true"
+              assign_to="3"/>	
+        <!-- Save the To-tag value in [$4] -->
+        <ereg regexp=".*;tag=(.*)"
+              search_in="hdr"
+              header="To:"
+              check_it="true"
+              assign_to="4"/>	
+    </action>
+  </recv>
+
+  <pause/>
+
+  <send retrans="1000">
+    <![CDATA[
+
+PUBLISH sip:[service]@[domain] SIP/2.0
+Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+Max-Forwards: 70
+Contact: sip:[service]@[local_ip]:[local_port]
+To: "[service]"<sip:[service]@[domain]>
+From: "[service]"<sip:[service]@[domain]>;tag=[call_number]
+Call-ID: [call_id]
+CSeq: 2 PUBLISH
+Expires: 60
+Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY, MESSAGE, SUBSCRIBE, INFO
+Content-Type: application/pidf+xml
+User-Agent: sipp
+Event: presence
+SIP-If-Match:[$3]
+Content-Length: [len]
+
+<?xml version='1.0' encoding='UTF-8'?><presence xmlns='urn:ietf:params:xml:ns:pidf' xmlns:dm='urn:ietf:params:xml:ns:pidf:data-model' xmlns:rpid='urn:ietf:params:xml:ns:pidf:rpid' xmlns:c='urn:ietf:params:xml:ns:pidf:cipid' entity='sip:[service]@[domain]'><tuple id='t532d494f'><status><basic>open</basic></status></tuple><dm:person id='p98169736'><rpid:activities><rpid:busy/></rpid:activities><dm:note>Busy</dm:note></dm:person></presence>
+]]>
+  </send>
+
+  <recv response="200" rtd="true">
+      <action>
+        <!-- Save the To-tag value in [$4] -->
+        <ereg regexp=".*;tag=(.*)"
+              search_in="hdr"
+              header="To:"
+              check_it="true"
+              assign_to="4"/>	
+    </action>
+  </recv>
+
+<Reference variables="3,4"/>
+</scenario>
+
