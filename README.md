@@ -448,16 +448,101 @@ but BYE is authenticated by the UAC.
 A basic stir and shaken authentication<br>
 It use a compatible Self-Signed STIR/SHAKEN Certificate [(info here)](https://blog.opensips.org/2022/10/31/how-to-generate-self-signed-stir-shaken-certificates)<br>
 :warning: This scenario use a specific version of [opensips-cli](https://hub.docker.com/r/allomediadocker/opensips-cli)
+(more explanations in scenario's README)
 
 #### 02.auth-diverted-cached
 Same as
-[01.auth-simple](#01auth-simple), but add processing of Diversion header, public key caching, store private key in separate file
+[01.auth-simple](#01auth-simple), but add processing of Diversion header, public key caching, store private key in separate file (more explanations in scenario's README)<br>
 :warning: Scenario for French regulations
 
 #### 03.auth-issue-bypass-token
 Same as
-[01.auth-simple](#01auth-simple), $var(cert) deleted to force stir_shaken_auth function in error and automatically add P-Identity-Bypass header. 
+[01.auth-simple](#01auth-simple), $var(cert) deleted to force stir_shaken_auth function in error and automatically add P-Identity-Bypass header. (more explanations in scenario's README)<br>
 :warning: Scenario for French regulations
+
+#### 04.verify-200
+Places a call with correct Identity header
+
+#### 05.verify-200-anonymous
+Places a call with correct Identity header but with `From` Anonymous
+
+#### 06.verify-error-400-wrong-from
+Places a call with wrong orig in conf (more explanations in scenario's README)
+
+#### 07.verify-error-400-wrong-from-no-kill-call
+Places a call with wrong orig in conf, but not kill call (more explanations in scenario's README)
+
+#### 08.verify-error-403-wrong-date
+Places a call with wrong Date header (more explanations in scenario's README)
+
+#### 09.verify-error-403-wrong-iat
+Places a call with wrong iat token (more explanations in scenario's README)
+
+#### 10.verify-error-428-no-identity
+Places a call without Identity header (more explanations in scenario's README)
+
+#### 11.verify-error-436-no-info
+Places a call without Identity's info param (more explanations in scenario's README)
+
+#### 12.verify-error-436-token-no-4-params
+Places a call without 4 params in Identity header (more explanations in scenario's README)
+
+#### 13.verify-error-436-x5u-diff-info
+Places a call with x5u and info are different (more explanations in scenario's README)
+
+#### 14.verify-error-437-no-alg
+Places a call without alg identity param (more explanations in scenario's README)
+
+#### 15.verify-error-437-wrong-alg
+Places a call with wrong alg identity param (more explanations in scenario's README)
+
+#### 16.verify-error-437-wrong-header-alg
+Places a call without alg token param (more explanations in scenario's README)
+
+#### 17.verify-error-437-wrong-header-typ
+Places a call without typ token param (more explanations in scenario's README)
+
+#### 18.verify-error-437-cert-expired
+Places a call with expired certificate (more explanations in scenario's README)
+
+#### 19.verify-error-437-cert-in-future
+Places a call with certificate starts in 2025 (more explanations in scenario's README)
+
+#### 20.verify-error-438-identity-more-4-params
+Places a call with 5 params in Identity header (more explanations in scenario's README)
+
+#### 21.verify-error-438-no-ppt
+Places a call without ppt identity param (more explanations in scenario's README)
+
+#### 22.verify-error-438-wrong-ppt
+Places a call with wrong ppt identity param (more explanations in scenario's README)
+
+#### 23.verify-error-438-wrong-header-ppt
+Places a call without ppt token param (more explanations in scenario's README)
+
+#### 24.verify-error-438-wrong-attest
+Places a call with wrong attest (more explanations in scenario's README)
+
+#### 25.verify-error-438-orig-diff-from
+Places a call with orig and from are different (more explanations in scenario's README)
+
+#### 26.verify-error-438-dest-diff-to
+Places a call with dest and To are different (more explanations in scenario's README)
+
+#### 27.acc-stats-200
+Places a call with correct Identity and push stats in ACC (more explanations in scenario's README)
+:warning: Scenario for French regulations<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
+
+#### 28.acc-stats-error-403-wrong-iat
+Places a call with wrong iat token and push stats in ACC (more explanations in scenario's README)
+:warning: Scenario for French regulations<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
+
+#### 29.acc-stats-error-403-no-kill-call
+Places a call with wrong iat token, but not kill call and push stats in ACC (more explanations in scenario's README)
+:warning: Scenario for French regulations<br>
+:warning: This scenario use a specific version of [opensips](https://hub.docker.com/r/allomediadocker/opensips)
 
 ## Execution
 

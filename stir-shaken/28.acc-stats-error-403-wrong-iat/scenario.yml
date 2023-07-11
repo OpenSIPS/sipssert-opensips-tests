@@ -1,0 +1,39 @@
+---
+# generate CA: https://blog.opensips.org/2022/10/31/how-to-generate-self-signed-stir-shaken-certificates/
+
+timeout: 50
+
+tasks:
+  - name: MySQL Server
+    type: mysql
+    label: mysql
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      ready: mysql
+
+  - name: SIPP UAC
+    type: uac-sipp-stir-shaken
+    require: OpenSIPS
+    service: "+33987654321"
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: "+33612345678"
+    duration: 10000
+    stir_shaken_origid: "toto"
+    stir_shaken_private_key: |
+      -----BEGIN EC PRIVATE KEY-----
+      MHcCAQEEIIOvgr23lbJ5rIOhiF+LR/VU4piEc1EYLT1CF5SN5HtZoAoGCCqGSM49
+      AwEHoUQDQgAEuyQP0hteN1oKDUxo/2zvTp+0ppJ2IntNSdu36QFsUPDsCWlr4iTU
+      MsjPtD+XQ58xQEf6n/zTE9cwZhs46NJWdA==
+      -----END EC PRIVATE KEY-----
+
+  - name: MySQL check ACC created
+    type: mysql-client
+    script: scripts/mysql-acc.sh
+    args: "yes"
+    require:
+      after:
+        task: SIPP UAC
+        wait: 3

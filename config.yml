@@ -22,6 +22,11 @@ defaults:
     port: {{ uas_port }}
     keys:
       domain: {{ opensips_ip }}
+  uac-sipp-stir-shaken:
+    port: {{ uac_port }}
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    keys:
+      domain: {{ opensips_ip }}
   opensips-cli:
     mi_ip: {{ opensips_ip }}
   opensips:
