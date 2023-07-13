@@ -204,7 +204,7 @@ CREATE INDEX del1_idx ON pua (pres_uri, event);
 CREATE INDEX del2_idx ON pua (expires);
 CREATE INDEX update_idx ON pua (pres_uri, pres_id, flag, event);
 
-INSERT INTO version (table_name, table_version) values ('dialog','12');
+INSERT INTO version (table_name, table_version) values ('dialog','11');
 CREATE TABLE dialog (
     dlg_id BIGINT(10) UNSIGNED PRIMARY KEY NOT NULL,
     callid CHAR(255) NOT NULL,
@@ -229,7 +229,7 @@ CREATE TABLE dialog (
     timeout INT(10) UNSIGNED NOT NULL,
     vars BLOB(4096) DEFAULT NULL,
     profiles TEXT(512) DEFAULT NULL,
-    script_flags CHAR(255) DEFAULT NULL,
+    script_flags INT(10) UNSIGNED DEFAULT 0 NOT NULL,
     module_flags INT(10) UNSIGNED DEFAULT 0 NOT NULL,
     flags INT(10) UNSIGNED DEFAULT 0 NOT NULL,
     rt_on_answer CHAR(64) DEFAULT NULL,

@@ -34,5 +34,7 @@ defaults:
     image: mysql:5.7
     label: mysql
     stop_timeout: 5
+    ready:
+      wait: 10
   mysql-client:
     host: {{ mysql_ip }}
