@@ -466,6 +466,14 @@ Tests accounting functionalities.
 
 Places a call and checks the transcation accounting information in a database backend.
 
+#### 02.db-transaction-failed
+
+Places a call and checks the failed transcation accounting information in a database backend.
+
+#### 03.db-cdr
+
+Places a call and checks the CDR accounting information in a database backend.
+
 ### Presence
 
 Tests presence functionalities.
