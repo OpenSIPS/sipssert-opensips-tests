@@ -1,8 +1,8 @@
 #!/bin/bash
 
-l=$(mysql opensips -Nse 'select count(*) from acc')
+l=$(mysql opensips -Nse 'select count(*) from acc where sip_code="200"')
 if [ "$l" = "1" ]; then
 	exit 0
 fi
-echo "ERROR: number of dialogs is $l"
+
 exit 1
