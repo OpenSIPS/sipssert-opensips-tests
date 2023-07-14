@@ -1,0 +1,4 @@
+---
+media_ip: 192.168.52.5
+media_port: 5060
+uac_pickup_port: 5044

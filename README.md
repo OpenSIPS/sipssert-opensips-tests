@@ -313,6 +313,10 @@ provides a provisional media to the remaining participant.
 Same as [18.refer-unattended-uas-mi](#18refer-unattended-uas-mi), but
 provides a provisional media to the remaining participant.
 
+#### 21.parking
+Runs a simple parking scenario where a call is sent to a media server then picked
+up by the called entity later.
+
 ### UAC Auth
 
 Verifies the behavior of uac_auth module.
