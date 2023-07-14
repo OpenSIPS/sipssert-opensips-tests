@@ -335,8 +335,12 @@ provides a provisional media to the remaining participant.
 Same as [03.refer-unattended-uac](#03refer-unattended-uac), but the transfer
 fails and the remaining participant is bridged with a new destination.
 
-#### 24.top-hiding
+#### 25.top-hiding
 Runs the internal topology hiding scenario.
+
+#### 26.parking
+Runs a simple parking scenario where a call is sent to a media server then picked
+up by the called entity later.
 
 ### UAC Auth
 
