@@ -317,6 +317,14 @@ provides a provisional media to the remaining participant.
 Runs a simple parking scenario where a call is sent to a media server then picked
 up by the called entity later.
 
+#### 27.top-hiding-reject
+Run the same as [25.top-hiding](#25top-hiding) scenario, but send re-INVITEs
+which are rejected.
+
+#### 28.top-hiding-overlapping
+Run the same as [25.top-hiding](#25top-hiding) scenario, but send re-INVITEs
+in such a manner that they overlap.
+
 ### UAC Auth
 
 Verifies the behavior of uac_auth module.
