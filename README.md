@@ -355,6 +355,26 @@ Run the same as
 scenario, but the referee no longer sends the re-INVITE, thus we retry
 the bridging after 2.1-4s.
 
+#### 31.refer-unattended-uac-notify-cancel
+Run a transfer similar to 
+[09.refer-unattended-uac-notify-fail](#09refer-unattended-uac-notify-fail), but
+the call times out and the referee's call gets canceled.
+
+#### 32.refer-unattended-uas-notify-cancel
+Run a transfer similar to 
+[10.refer-unattended-uas-notify-fail](#10refer-unattended-uas-notify-fail), but
+the call times out and the referee's call gets canceled.
+
+#### 33.refer-unattended-uac-notify-terminate
+Run a transfer similar to 
+[09.refer-unattended-uac-notify-fail](#09refer-unattended-uac-notify-fail), but
+the remaining participant terminates the call during transfer.
+
+#### 34.refer-unattended-uas-notify-terminate
+Run a transfer similar to 
+[10.refer-unattended-uas-notify-fail](#10refer-unattended-uas-notify-fail), but
+the remaining participant terminates the call during transfer.
+
 ### UAC Auth
 
 Verifies the behavior of uac_auth module.
