@@ -1,0 +1,50 @@
+---
+timeout: 10
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: SIPP UAS
+    type: uas-sipp
+    username: {{ username }}
+    password: {{ password }}
+    config_file: scripts/uas.xml
+    duration: 2000 # duration before re-INVITE and BYE
+    args: -auth_uri {{ uac_ip }}:{{ uac_port }}
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    ip: {{ uac_ip }}
+    caller: caller
+    keys:
+      username: {{ username }}
+      password: {{ password }}
+      nonce: {{ nonce }}
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  - name: MI check active
+    type: opensips-cli
+    script: scripts/check-dialog.py
+    args: active
+    require:
+      started:
+        task: SIPP UAC
+        wait: 2
+
+  # dialog should be deleted after SIPP finishes
+  - name: MI check deleted
+    type: opensips-cli
+    script: scripts/check-dialog.py
+    args: deleted
+    require: SIPP UAC
