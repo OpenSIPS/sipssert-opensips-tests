@@ -190,6 +190,10 @@ Similar to [02.pinging](#02pinging), but checks that re-INVITE pinging is workin
 
 Similar to [01.dialog](#01simple), but expires the dialog before a BYE is received.
 
+#### 05.reinvite-auth
+
+Runs a call through dialog where the re-INVITE is challenged by the UAC.
+
 ### Topology Hiding
 
 Runs a set of calls using the topology hiding scenario, verifying that the UAS
