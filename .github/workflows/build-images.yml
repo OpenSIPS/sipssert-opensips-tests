@@ -1,0 +1,35 @@
+name: Publish SIPSsert Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: OpenSIPS Version to publish
+        required: true
+      tag:
+        description: OpenSIPS SIPssert Tag to use
+        required: true
+
+jobs:
+
+  publish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get the required OpenSIPS Modules
+      id: fetch_modules
+      run: echo "MODULES=$(cat .opensips.modules | tr '\n' ' ')" > $GITHUB_OUTPUT
+
+    - name: Publish OpenSIPS SIPssert Docker image
+      uses: OpenSIPS/docker-opensips/.github/actions/docker-opensips-publish@main
+      with:
+        version: ${{ github.event.inputs.version }}
+        tag: ${{ github.event.inputs.tag }}
+        cli: false
+        build: nightly
+        modules: ${{ steps.fetch_modules.outputs.MODULES }}
+        docker-username: ${{ secrets.DOCKER_USERNAME }}
+        docker-token: ${{ secrets.DOCKER_TOKEN }}
