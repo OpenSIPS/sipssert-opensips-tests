@@ -188,6 +188,12 @@ Similar to [01.dialog](#01simple), but expires the dialog before a BYE is receiv
 
 Runs a call through dialog where the re-INVITE is challenged by the UAC.
 
+#### 06.auth-update
+
+Runs a scenario when an UPDATE message is being sent while the calls is being
+answered.
+
+Runs a call through dialog where the re-INVITE is challenged by the UAC.
 ### Topology Hiding
 
 Runs a set of calls using the topology hiding scenario, verifying that the UAS
