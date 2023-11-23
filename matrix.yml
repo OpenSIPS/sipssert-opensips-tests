@@ -1,0 +1,15 @@
+os:
+  - ubuntu-latest
+scenario:
+  - accounting
+  - auth
+  - b2b
+  - dialog
+  - permissions
+  - presence
+  - record-route
+  - registration
+  - startup
+  - stir-shaken
+  - topology-hiding
+  - uac-auth
