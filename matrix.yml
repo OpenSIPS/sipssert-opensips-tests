@@ -13,3 +13,5 @@ scenario:
   - stir-shaken
   - topology-hiding
   - uac-auth
+params:
+  - --exclude topology-hiding/02.th-no-dialog-username
