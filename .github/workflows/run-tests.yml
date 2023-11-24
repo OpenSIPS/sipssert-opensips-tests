@@ -6,15 +6,33 @@ on:
   pull_request:
 
 jobs:
+  setup-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+
+    - name: Prepare SIPssert
+      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
+
+    - name: Read and parse YAML file
+      id: set-matrix
+      uses: ./sipssert/actions/Set_Matrix
 
   test:
+    needs: setup-matrix
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.setup-matrix.outputs.matrix)}}
+
+    runs-on: ${{ matrix.os }}
 
     steps:
 
     - name: Prepare SIPssert
       uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
 
-    - name: Run All Tests
-      uses: OpenSIPS/SIPssert/actions/Run_All_Tests@main
+    - name: Run Test
+      uses: ./sipssert/actions/Run_Test
+      with:
+        scenario: ${{ matrix.scenario }}
