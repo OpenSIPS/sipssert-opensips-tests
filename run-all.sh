@@ -1,7 +1,7 @@
 #!/bin/bash
 
 yaml_list() {
-	test -n "${BASH_SOURCE[0]}" && DIR="$(dirname "${BASH_SOURCE[0]}")" || DIR=.
+	DIR="$(dirname -- "$(readlink "$0")")"
 	python3 -c "import yaml;print(' '.join(yaml.safe_load(open('$DIR/environment.yml'))['$1']))"
 }
 
