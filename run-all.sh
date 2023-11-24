@@ -2,7 +2,7 @@
 
 yaml_list() {
 	test -n "${BASH_SOURCE[0]}" && DIR="$(dirname "${BASH_SOURCE[0]}")" || DIR=.
-	python3 -c "import yaml;print(' '.join(yaml.safe_load(open('$DIR/matrix.yml'))['$1']))"
+	python3 -c "import yaml;print(' '.join(yaml.safe_load(open('$DIR/environment.yml'))['$1']))"
 }
 
 # exclude tests that we know they fail for sure
