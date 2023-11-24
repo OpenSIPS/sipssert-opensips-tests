@@ -1,0 +1,21 @@
+os:
+  - ubuntu-latest
+test_set:
+  - accounting
+  - auth
+  - b2b
+  - dialog
+  - permissions
+  - presence
+  - record-route
+  - registration
+  - startup
+  - stir-shaken
+  - topology-hiding
+  - uac-auth
+params:
+ - --exclude b2b/09.refer-unattended-uac-notify-fail
+ - --exclude b2b/10.refer-unattended-uas-notify-fail
+ - --exclude b2b/15.refer-unattended-uac-prov-notify-fail
+ - --exclude b2b/16.refer-unattended-uas-prov-notify-fail
+ - --exclude topology-hiding/02.th-no-dialog-username
