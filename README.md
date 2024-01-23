@@ -352,6 +352,14 @@ Runs the internal topology hiding scenario.
 Runs a simple parking scenario where a call is sent to a media server then picked
 up by the called entity later.
 
+#### 26.parking-late-bye
+Run the same as [26.parking](#26parking) scenario, but delays the bye towards
+the initial entity until the pickup is established.
+
+#### 26.parking-late-bye-delay
+Run the same as [26.parking-late-bye](#26parking-late-bye) scenario, but
+delays the BYE being sent with a configured value.
+
 #### 27.top-hiding-reject
 Run the same as [25.top-hiding](#25top-hiding) scenario, but send re-INVITEs
 which are rejected.

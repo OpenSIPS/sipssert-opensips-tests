@@ -1,0 +1,46 @@
+---
+timeout: 35
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: SIPP Media
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+    ip: {{ media_ip }}
+    port: {{ media_port }}
+
+  - name: SIPP UAC
+    type: uac-sipp
+    duration: 1
+    service: {{ username }}
+    config_file: scripts/uac.xml
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    caller: caller
+    require:
+      - started:
+          task: SIPP Media
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  - name: SIPP UAC Pickup
+    type: uac-sipp
+    port: {{uac_pickup_port}}
+    service: pickup
+    config_file: scripts/uac_pickup.xml
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    caller: {{ username }}
+    require:
+      - started:
+          task: SIPP UAC
+          wait: 2
+      - started:
+          task: SIPP Media
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5

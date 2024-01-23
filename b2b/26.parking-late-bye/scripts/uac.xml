@@ -18,7 +18,7 @@
       Max-Forwards: 70
       From: <sip:[caller]@[local_ip]:[local_port]>;tag=[call_number]
       To: <sip:[service]@[remote_ip]:[remote_port]>
-      Call-ID: parking:///[call_id]
+      Call-ID: parking-late-bye:///[call_id]
       CSeq: 1 INVITE
       Contact: <sip:[local_ip]:[local_port]>
       Content-Type: application/sdp
@@ -72,7 +72,7 @@
       [routes]
       CSeq: 1 ACK
       Contact: <sip:[local_ip]:[local_port]>
-      Call-ID: parking:///[call_id]
+      Call-ID: parking-late-bye:///[call_id]
       Max-Forwards: 70
       Subject: Performance Test
       User-Agent: sipp
@@ -156,7 +156,7 @@
       [routes]
       CSeq: 2 BYE
       Contact: <sip:[local_ip]:[local_port]>
-      Call-ID: parking:///[call_id]
+      Call-ID: parking-late-bye:///[call_id]
       Max-Forwards: 70
       User-Agent: sipp
       Content-Length: 0
