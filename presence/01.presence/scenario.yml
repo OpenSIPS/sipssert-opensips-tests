@@ -31,8 +31,4 @@ tasks:
     require:
       after:
         task: Publish
-<<<<<<< Updated upstream
-        wait: 2
-=======
         wait: 1
->>>>>>> Stashed changes
