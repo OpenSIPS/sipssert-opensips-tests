@@ -29,6 +29,10 @@ tasks:
       subscriber: testing2
     calls: 1
     require:
-      started:
+      after:
         task: Publish
+<<<<<<< Updated upstream
         wait: 2
+=======
+        wait: 1
+>>>>>>> Stashed changes
