@@ -4,6 +4,11 @@ on:
   # Triggers the workflow on all push or pull request events
   push:
   pull_request:
+  workflow_run:
+    workflows:
+      - Build SIPSsert Image
+    types:
+      - completed
 
 jobs:
   setup-matrix:

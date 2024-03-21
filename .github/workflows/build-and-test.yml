@@ -1,4 +1,4 @@
-name: Publish SIPSsert Image
+name: Build SIPSsert Image
 
 on:
   workflow_dispatch:
@@ -33,9 +33,3 @@ jobs:
         modules: ${{ steps.fetch_modules.outputs.MODULES }}
         docker-username: ${{ secrets.DOCKER_USERNAME }}
         docker-token: ${{ secrets.DOCKER_TOKEN }}
-
-    - name: Prepare SIPssert
-      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
-
-    - name: Run All Tests
-      uses: OpenSIPS/SIPssert/actions/Run_All_Tests@main
