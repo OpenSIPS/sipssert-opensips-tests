@@ -1,4 +1,4 @@
-name: Publish SIPSsert Image
+name: Build SIPSsert Image and run tests
 
 on:
   workflow_dispatch:
