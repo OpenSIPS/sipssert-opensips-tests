@@ -18,4 +18,4 @@ tasks:
     require:
       started:
         task: OpenSIPS
-        wait: 0.5
+        wait: 1
