@@ -1,5 +1,5 @@
 ---
-timeout: 30
+timeout: 40
 
 tasks:
   - name: MySQL Server
