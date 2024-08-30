@@ -1,6 +1,9 @@
-os:
-  - ubuntu-latest
-test_set:
+---
+logging:
+  controller:
+    level: DEBUG
+#    console: true
+tests:
   - accounting
   - auth
   - b2b
@@ -13,5 +16,7 @@ test_set:
   - stir-shaken
   - topology-hiding
   - uac-auth
-params:
- - --exclude topology-hiding/02.th-no-dialog-username
+exclude:
+ - topology-hiding/02.th-no-dialog-username
+os:
+  - ubuntu-latest

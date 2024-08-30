@@ -38,7 +38,5 @@ jobs:
     - name: Prepare SIPssert
       uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
 
-    - name: Run Test
-      uses: ./sipssert/actions/Run_Test
-      with:
-        test_set: ${{ matrix.test_set }}
+    - name: Run Tests
+      uses: ./sipssert/actions/Run_Tests
