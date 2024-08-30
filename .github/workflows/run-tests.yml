@@ -39,4 +39,4 @@ jobs:
       uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
 
     - name: Run Tests
-      uses: ./sipssert/actions/Run_Tests
+      uses: OpenSIPS/SIPssert/actions/Run_tests@main
