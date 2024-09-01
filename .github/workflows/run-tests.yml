@@ -30,7 +30,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.setup-matrix.outputs.matrix)}}
-
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -39,4 +38,6 @@ jobs:
       uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
 
     - name: Run Tests
-      uses: OpenSIPS/SIPssert/actions/Run_tests@main
+      uses: ./sipssert/actions/Run_Test
+      with:
+        tests: ${{ matrix.tests }}
