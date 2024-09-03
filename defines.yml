@@ -11,7 +11,6 @@ uas_ip: 192.168.52.3
 uas_ip_osbr1: 10.52.0.3
 uas_port: 5080
 mysql_ip: 192.168.52.2
-mysql_ready_timeout: 15
 mysql_root_host: 192.168.52.%
 username: testing
 password: T3st|n6
