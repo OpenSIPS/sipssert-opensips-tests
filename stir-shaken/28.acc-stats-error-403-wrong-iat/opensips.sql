@@ -1,4 +1,4 @@
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+
 CREATE DATABASE opensips;
 
 USE opensips;

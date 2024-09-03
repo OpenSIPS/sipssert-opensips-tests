@@ -9,7 +9,7 @@ tasks:
   - name: OpenSIPS
     type: opensips
     require:
-      ready: mysql
+      healthy: mysql
 
   - name: SIPP UAS
     type: uas-sipp
