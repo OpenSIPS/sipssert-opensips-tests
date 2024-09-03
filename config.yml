@@ -42,9 +42,8 @@ defaults:
     healthcheck:
       test: /healthcheck.sh
       start_period: 30000000000
+      start_interval: 1000000000
     env:
       MYSQL_ROOT_HOST: {{ mysql_root_host }}
-    ready:
-      wait: {{ mysql_ready_timeout }}
   mysql-client:
     host: {{ mysql_ip }}
