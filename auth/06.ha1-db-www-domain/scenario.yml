@@ -8,7 +8,7 @@ tasks:
   - name: OpenSIPS
     type: opensips
     require:
-      ready: mysql
+      healthy: mysql
 
   - name: Register
     type: uac-sipp
