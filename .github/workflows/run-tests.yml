@@ -48,4 +48,4 @@ jobs:
     - name: Run Test
       uses: OpenSIPS/SIPssert/.github/actions/Run_Tests@main
       with:
-        test_set: ${{ matrix.test_set }}
+        tests: ${{ matrix.tests }}
