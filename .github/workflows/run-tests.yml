@@ -40,7 +40,7 @@ jobs:
     - name: Prepare SIPssert
       uses: OpenSIPS/SIPssert/.github/actions/Prepare_SIPssert@main
       with:
-        sipssert-repo: ${{ github.repository }}
+        sipssert-repo: OpenSIPS/SIPSsert
         tests-repo: OpenSIPS/sipssert-opensips-tests
 
     - name: Run Test
