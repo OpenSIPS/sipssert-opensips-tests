@@ -9,6 +9,8 @@ on:
       - Build SIPSsert Image
     types:
       - completed
+  schedule:
+    - cron: '0 0 2 * * * Mon'
   workflow_call:
 
 jobs:
