@@ -1,4 +1,4 @@
-name: OpenSIPS Conformance Tests
+name: Run OpenSIPS Conformance Tests
 
 on:
   # Triggers the workflow on all push or pull request events
@@ -9,6 +9,7 @@ on:
       - Build SIPSsert Image
     types:
       - completed
+  workflow_call:
 
 jobs:
   setup-matrix:
@@ -17,16 +18,18 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
 
-    - name: Prepare SIPssert
-      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
+    - name: Checkout Tests repo
+      uses: actions/checkout@v4
+      with:
+        repository: OpenSIPS/sipssert-opensips-tests
+        path: tests
 
     - name: Read and parse YAML file
       id: set-matrix
-      uses: ./sipssert/actions/Set_Matrix
+      uses: OpenSIPS/SIPssert/.github/actions/Set_Matrix@main
 
   test:
     needs: setup-matrix
-
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.setup-matrix.outputs.matrix)}}
@@ -35,9 +38,12 @@ jobs:
     steps:
 
     - name: Prepare SIPssert
-      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
+      uses: OpenSIPS/SIPssert/.github/actions/Prepare_SIPssert@main
+      with:
+        sipssert-repo: ${{ github.repository }}
+        tests-repo: OpenSIPS/sipssert-opensips-tests
 
-    - name: Run Tests
-      uses: ./sipssert/actions/Run_Test
+    - name: Run Test
+      uses: OpenSIPS/SIPssert/.github/actions/Run_Tests@main
       with:
         tests: ${{ matrix.tests }}
