@@ -36,10 +36,15 @@ defaults:
     stop_timeout: 5
   mysql:
     ip: {{ mysql_ip }}
-    image: mysql:5.7
+    image: mysql/mysql-server:8.0
     label: mysql
     stop_timeout: 5
-    ready:
-      wait: {{ mysql_ready_timeout }}
+    healthcheck:
+      test: /healthcheck.sh
+      interval: 2500000000
+      timeout: 2500000000
+      retries: 10
+    env:
+      MYSQL_ROOT_HOST: {{ mysql_root_host }}
   mysql-client:
     host: {{ mysql_ip }}
