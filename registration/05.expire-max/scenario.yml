@@ -20,7 +20,7 @@ tasks:
         wait: 0.5
 
   - name: MI check Register
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     require:
       started:
@@ -36,7 +36,7 @@ tasks:
         wait: 3
 
   - name: MI check Expired
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: expired
     require:
