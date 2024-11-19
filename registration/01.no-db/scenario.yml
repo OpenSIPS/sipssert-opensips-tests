@@ -15,8 +15,9 @@ tasks:
         wait: 1
 
   - name: MI check Register
-    type: opensips-cli
+    type: opensips-mi
     script: check-register.py
+    mi_type: http
     require: Register
 
   - name: Unregister
@@ -29,7 +30,7 @@ tasks:
         wait: 3
 
   - name: MI check Unregister
-    type: opensips-cli
+    type: opensips-mi
     script: check-register.py
     require: Unregister
     args: unregister

@@ -29,6 +29,8 @@ defaults:
       domain: {{ opensips_ip }}
   opensips-cli:
     mi_ip: {{ opensips_ip }}
+  opensips-mi:
+    mi_ip: {{ opensips_ip }}
   opensips:
     ip: {{ opensips_ip }}
     image: opensips/opensips:sipssert{% if opensips_version is defined %}-{{ opensips_version }}{% endif %}

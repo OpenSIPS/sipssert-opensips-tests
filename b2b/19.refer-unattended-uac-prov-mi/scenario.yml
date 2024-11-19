@@ -42,7 +42,7 @@ tasks:
           wait: 0.5
 
   - name: MI transfer
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/transfer.py
     args:
       - sip:transfer@{{ transfer_ip }}:{{ transfer_port }}

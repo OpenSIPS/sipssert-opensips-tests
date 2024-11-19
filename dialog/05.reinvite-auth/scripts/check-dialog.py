@@ -1,14 +1,24 @@
-from opensipscli import cli
+from opensips.mi import OpenSIPSMI
 import sys
+import os
 
-handler = cli.OpenSIPSCLI()
+mi_type = os.getenv('MI_TYPE', 'http')
+mi_ip = os.getenv('MI_IP', '127.0.0.1')
+mi_port = os.getenv('MI_PORT', '8888')
+
+if mi_type == 'http':
+    handler = OpenSIPSMI(conn='http', url='http://{}:{}/mi'.format(mi_ip, mi_port))
+elif mi_type == 'datagram':
+    handler = OpenSIPSMI(conn='datagram', datagram_ip=mi_ip, datagram_port=mi_port)
+else:
+    sys.exit(1)
 
 if len(sys.argv) < 1:
     sys.exit(-1)
 
-dialogs = handler.mi("dlg_list")['Dialogs']
+dialogs = handler.execute("dlg_list")['Dialogs']
 if sys.argv[1] == "active":
-    out = handler.mi("get_statistics", {"statistics" : ["active_dialogs"]})
+    out = handler.execute("get_statistics", {"statistics" : ["active_dialogs"]})
     if out["dialog:active_dialogs"] != 1:
         print("Active dialogs: {}".format(out["dialog:active_dialogs"]))
         sys.exit(11)
@@ -16,7 +26,7 @@ if sys.argv[1] == "active":
         print("Number of dialogs: {}".format(len(dialogs)))
         sys.exit(12)
 elif sys.argv[1] == "deleted":
-    out = handler.mi("get_statistics", {"statistics" : ["dialog:"]})
+    out = handler.execute("get_statistics", {"statistics" : ["dialog:"]})
     if out["dialog:active_dialogs"] != 0:
         print("Active dialogs: {}".format(out["dialog:active_dialogs"]))
         sys.exit(21)
