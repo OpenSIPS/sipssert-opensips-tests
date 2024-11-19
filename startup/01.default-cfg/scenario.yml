@@ -6,7 +6,7 @@ tasks:
     type: opensips
 
   - name: MI check PS
-    type: opensips-cli
+    type: opensips-mi
     script: check-ps.py
     require:
       after:
