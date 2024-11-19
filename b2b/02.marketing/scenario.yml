@@ -28,10 +28,8 @@ tasks:
     port: {{ operator_port }}
 
   - name: Place Call
-    type: opensips-cli
+    type: opensips-mi
     args:
-      - -x
-      - mi
       - b2b_trigger_scenario
       - marketing
       - customer,sip:customer@{{ caller_ip }}:{{ caller_port }}
