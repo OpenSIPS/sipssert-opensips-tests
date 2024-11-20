@@ -12,7 +12,7 @@ tasks:
     require:
       started:
         task: OpenSIPS
-        wait: 1
+        wait: 2
 
   - name: MI check Register
     type: opensips-mi
