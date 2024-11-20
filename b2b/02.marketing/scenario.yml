@@ -29,8 +29,8 @@ tasks:
 
   - name: Place Call
     type: opensips-mi
+    script: scripts/place_call.py
     args:
-      - b2b_trigger_scenario
       - marketing
       - customer,sip:customer@{{ caller_ip }}:{{ caller_port }}
       - media,sip:announcement@{{ media_ip }}:{{ media_port }}
