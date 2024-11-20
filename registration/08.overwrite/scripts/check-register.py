@@ -32,6 +32,8 @@ if not port:
         print("contact still valid, expires {}!".format(expires))
         sys.exit(2)
     sys.exit(0)
+# filter out deleted contacts
+contacts = [c for c in contacts if c['Expires'] != "deleted"]
 if len(contacts) != 1:
     print("Unexpected number of contacts: {}!".format(len(contacts)))
     sys.exit(3)
