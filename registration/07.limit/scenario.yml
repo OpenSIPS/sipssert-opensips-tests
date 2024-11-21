@@ -21,7 +21,7 @@ tasks:
         wait: 0.5
 
   - name: MI check Register UAC 1
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: 1
     require:
@@ -47,7 +47,7 @@ tasks:
         wait: 5
 
   - name: MI check Register UAC 2
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: 2
     require:
@@ -73,7 +73,7 @@ tasks:
         wait: 10
 
   - name: MI check Register UAC 3
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: 2
     require:
@@ -89,7 +89,7 @@ tasks:
           wait: 3
 
   - name: MI check Expired UAC 1
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: 1
     require:
@@ -98,7 +98,7 @@ tasks:
         wait: 21
 
   - name: MI check Expired UAC 2
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: 0
     require:

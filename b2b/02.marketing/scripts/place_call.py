@@ -1,4 +1,4 @@
-from opensips.mi import OpenSIPSMI
+from opensips.mi import OpenSIPSMI, OpenSIPSMIException
 import sys
 import os
 
@@ -13,16 +13,12 @@ elif mi_type == 'datagram':
 else:
     sys.exit(1)
 
-unregister = True if len(sys.argv) > 1 and sys.argv[1] == "unregister" else False
+if len(sys.argv) < 5:
+    sys.exit(1)
 
-out = handler.execute("ul_dump")
-print(out)
-l = len(out['Domains'][0]['AORs'])
-
-if unregister:
-    if l != 0:
-        sys.exit(1)
-else:
-    if l != 1:
-        sys.exit(1)
-sys.exit(0)
+try:
+    handler.execute("b2b_trigger_scenario",
+                    [sys.argv[1], sys.argv[2], sys.argv[3], [sys.argv[4]]])
+except OpenSIPSMIException as e:
+    print(e)
+    sys.exit(1)
