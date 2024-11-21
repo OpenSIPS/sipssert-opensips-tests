@@ -17,10 +17,10 @@ tasks:
     require:
       started:
         task: OpenSIPS
-        wait: 0.5
+        wait: 1
 
   - name: MI check Register
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     require:
       after:
@@ -42,7 +42,7 @@ tasks:
     require: MySQL check Register
 
   - name: MI check Unregister
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-register.py
     args: unregister
     require:

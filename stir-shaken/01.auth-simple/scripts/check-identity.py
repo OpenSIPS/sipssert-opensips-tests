@@ -1,9 +1,34 @@
-from opensipscli import cli
-import jwt
 import sys
 import json
+from opensips.mi import OpenSIPSMI
+import os
+import importlib
+import subprocess
 
-handler = cli.OpenSIPSCLI()
+
+mi_type = os.getenv('MI_TYPE', 'http')
+mi_ip = os.getenv('MI_IP', '127.0.0.1')
+mi_port = os.getenv('MI_PORT', '8888')
+
+
+if mi_type == 'http':
+    handler = OpenSIPSMI(conn='http', url='http://{}:{}/mi'.format(mi_ip, mi_port))
+elif mi_type == 'datagram':
+    handler = OpenSIPSMI(conn='datagram', datagram_ip=mi_ip, datagram_port=mi_port)
+else:
+    sys.exit(1)
+
+
+def install_and_import(package, import_name=None):
+    try:
+        module = importlib.import_module(import_name if import_name else package)
+        print(f"{package} is already installed")
+    except ImportError:
+        print(f"{package} is not installed, installing...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        print(f"{package} installed successfully")
+        module = importlib.import_module(import_name if import_name else package)
+    return module
 
 
 def check_list(list, id, log):
@@ -17,8 +42,9 @@ def check_list(list, id, log):
 
 
 if __name__ == "__main__":
+    jwt = install_and_import("PyJWT", "jwt")
 
-    dialogs = handler.mi("dlg_list_ctx")['Dialogs']
+    dialogs = handler.execute("dlg_list_ctx")['Dialogs']
     json_dlg = json.loads(json.dumps(dialogs))
     # catch identity header in dialogs
     identity_cache = json_dlg[0]['context']['values'][0]['identity_cache']

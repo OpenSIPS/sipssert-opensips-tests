@@ -32,7 +32,7 @@ tasks:
           wait: 0.5
 
   - name: MI check active
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-dialog.py
     args: active
     require:
@@ -52,7 +52,7 @@ tasks:
 
   # dialog should be deleted after SIPP finishes
   - name: MI check deleted
-    type: opensips-cli
+    type: opensips-mi
     script: scripts/check-dialog.py
     args: deleted
     require:
