@@ -11,4 +11,4 @@ tasks:
     require:
       after:
         task: OpenSIPS
-        wait: 1
+        wait: 2
