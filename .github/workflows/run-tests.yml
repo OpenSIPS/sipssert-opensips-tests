@@ -49,3 +49,45 @@ jobs:
       uses: OpenSIPS/SIPssert/.github/actions/Run_Tests@main
       with:
         tests: ${{ matrix.tests }}
+
+  aggregate:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        repository: OpenSIPS/sipssert-opensips-tests
+        path: tests
+
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: junit-reports
+
+    - name: Aggregate JUnit Reports
+      run: |
+        pip install junitparser
+        python tests/.github/scripts/aggregate_junit_reports.py
+      env:
+        REPORTS_DIR: junit-reports
+        OUTPUT_FILE: junit-final-report.xml
+
+    - name: Upload JUnit XML
+      uses: actions/upload-artifact@v4
+      with:
+        name: junit-final-report
+        path: junit-final-report.xml
+
+    - name: Print tests summary
+      uses: mikepenz/action-junit-report@v5
+      id: summary
+      if: success() || failure()
+      with:
+        check_name: 'SIPssert tests report'
+        report_paths: junit-final-report.xml
+        annotate_only: true
+        fail_on_failure: true
+        detailed_summary: true
+        include_passed: true
