@@ -57,6 +57,9 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        repository: OpenSIPS/sipssert-opensips-tests
+        path: tests
 
     - name: Download All Artifacts
       uses: actions/download-artifact@v4
@@ -66,7 +69,7 @@ jobs:
     - name: Aggregate JUnit Reports
       run: |
         pip install junitparser
-        python .github/scripts/aggregate_junit_reports.py
+        python tests/.github/scripts/aggregate_junit_reports.py
       env:
         REPORTS_DIR: junit-reports
         OUTPUT_FILE: junit-final-report.xml
