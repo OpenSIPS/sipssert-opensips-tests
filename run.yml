@@ -16,7 +16,5 @@ tests:
   - stir-shaken
   - topology-hiding
   - uac-auth
-exclude:
- - topology-hiding/02.th-no-dialog-username
 os:
   - ubuntu-latest
