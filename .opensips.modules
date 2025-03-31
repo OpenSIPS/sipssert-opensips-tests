@@ -4,3 +4,4 @@ opensips-http-modules
 opensips-auth-modules
 opensips-presence-modules
 opensips-stir-shaken-module
+opensips-sqlite-module
