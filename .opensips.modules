@@ -1,4 +1,5 @@
 opensips-json-module
+opensips-mysql-module
 opensips-http-modules
 opensips-auth-modules
 opensips-presence-modules
