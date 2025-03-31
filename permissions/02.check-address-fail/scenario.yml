@@ -2,14 +2,22 @@
 timeout: 30
 
 tasks:
-  - name: MySQL Server
-    type: mysql
-    label: mysql
+  - name: Init SQLite DB
+    type: generic
+    image: alpine
+    volumes: 
+      - db_sqlite
+    args: cp /home/opensips.db /var/lib/opensips/db_sqlite/opensips.db
+    
 
   - name: OpenSIPS
     type: opensips
     require:
-      healthy: mysql
+      after:
+        task: Init SQLite DB
+        wait: 1
+    volumes:
+      - db_sqlite
 
   - name: SIPP UAC
     type: uac-sipp
@@ -22,3 +30,8 @@ tasks:
       - after:
           task: OpenSIPS
           wait: 0.5
+
+volumes:
+  db_sqlite:
+    bind: /var/lib/opensips/db_sqlite
+    mode: rw

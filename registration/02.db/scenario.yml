@@ -2,13 +2,21 @@
 timeout: 30
 
 tasks:
-  - name: MySQL Server
-    type: mysql
+  - name: Init SQLite DB
+    type: generic
+    image: alpine
+    volumes: 
+      - db_sqlite
+    args: cp /home/opensips.db /var/lib/opensips/db_sqlite/opensips.db
 
   - name: OpenSIPS
     type: opensips
     require:
-      healthy: mysql
+      after:
+        task: Init SQLite DB
+        wait: 1
+    volumes:
+      - db_sqlite
 
   - name: Register
     type: uac-sipp
@@ -27,19 +35,22 @@ tasks:
         task: Register
         wait: 0.5
 
-  - name: MySQL check Register
-    type: mysql-client
-    script: scripts/mysql-register.sh
+  - name: SQLite Check Register
+    type: generic
+    image: keinos/sqlite3
+    args: /home/scripts/sqlite-register.sh
     require:
       after:
         task: Register
         wait: 5
+    volumes:
+      - db_sqlite
 
   - name: Unregister
     type: uac-sipp
     username: {{ username }}
     config_file: scripts/sipp-unregister.xml
-    require: MySQL check Register
+    require: SQLite Check Register
 
   - name: MI check Unregister
     type: opensips-mi
@@ -50,11 +61,18 @@ tasks:
         task: Unregister
         wait: 0.5
 
-  - name: MySQL check Unregister
-    type: mysql-client
-    script: scripts/mysql-register.sh
-    args: unregister
+  - name: SQLite Check Unregister
+    type: generic
+    image: keinos/sqlite3
+    args: /home/scripts/sqlite-register.sh unregister
     require:
       after:
         task: Unregister
         wait: 5
+    volumes:
+      - db_sqlite
+
+volumes:
+  db_sqlite:
+    bind: /var/lib/opensips/db_sqlite
+    mode: rw
