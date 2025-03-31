@@ -2,13 +2,21 @@
 timeout: 45
 
 tasks:
-  - name: MySQL Server
-    type: mysql
+  - name: Init SQLite DB
+    type: generic
+    image: alpine
+    volumes: 
+      - db_sqlite
+    args: cp /home/opensips.db /var/lib/opensips/db_sqlite/opensips.db
 
   - name: OpenSIPS
     type: opensips
     require:
-      healthy: mysql
+      after:
+        task: Init SQLite DB
+        wait: 1
+    volumes:
+      - db_sqlite
 
   - name: Register UAC 1
     type: uac-sipp
@@ -27,14 +35,16 @@ tasks:
     require:
       after: Register UAC 1
 
-  - name: MySQL check Register UAC 1
-    type: mysql-client
-    script: scripts/mysql-register.sh
-    args: {{ uac_port + 1 }}
+  - name: SQLite check Register UAC 1
+    type: generic
+    image: keinos/sqlite3
+    args: /home/scripts/sqlite-register.sh {{ uac_port + 1 }}
     require:
       - after:
           task: Register UAC 1
           wait: 3
+    volumes:
+      - db_sqlite
 
   - name: Register UAC 2
     type: uac-sipp
@@ -53,14 +63,16 @@ tasks:
     require:
       after: Register UAC 2
 
-  - name: MySQL check Register UAC 2
-    type: mysql-client
-    script: scripts/mysql-register.sh
-    args: {{ uac_port + 2 }}
+  - name: SQLite check Register UAC 2
+    type: generic
+    image: keinos/sqlite3
+    args: /home/scripts/sqlite-register.sh {{ uac_port + 2 }}
     require:
       - after:
           task: Register UAC 2
           wait: 3
+    volumes:
+      - db_sqlite
 
   - name: MI check Expired UAC
     type: opensips-mi
@@ -70,10 +82,18 @@ tasks:
         task: Register UAC 2
         wait: 16
 
-  - name: MySQL check Expired
-    type: mysql-client
-    script: scripts/mysql-register.sh
+  - name: SQLite check Expired
+    type: generic
+    image: keinos/sqlite3
+    args: /home/scripts/sqlite-register.sh
     require:
       after:
         task: MI check Expired UAC
         wait: 2
+    volumes:
+      - db_sqlite
+
+volumes:
+  db_sqlite:
+    bind: /var/lib/opensips/db_sqlite
+    mode: rw
