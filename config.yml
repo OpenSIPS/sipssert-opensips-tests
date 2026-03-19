@@ -33,7 +33,7 @@ defaults:
     mi_ip: {{ opensips_ip }}
   opensips:
     ip: {{ opensips_ip }}
-    image: opensips/opensips:sipssert{% if opensips_version is defined %}-{{ opensips_version }}{% endif %}
+    image: '{{ opensips_image if opensips_image is defined else "opensips/opensips:sipssert" ~ ("-" ~ opensips_version if opensips_version is defined else "") }}'
     socket: udp:{{ opensips_ip }}:{{ opensips_port }}
     stop_timeout: 5
   mysql:
