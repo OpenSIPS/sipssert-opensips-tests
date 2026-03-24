@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<scenario name="UPDATE Interworking UAS">
+  <recv request="INVITE" crlf="true" rrs="true">
+    <action>
+      <ereg regexp=".+" search_in="hdr" header="Via:" check_it="true" assign_to="hdr_via"/>
+      <ereg regexp=".*" search_in="hdr" header="From:" assign_to="hdr_from"/>
+      <ereg regexp=".*" search_in="hdr" header="To:" assign_to="hdr_to"/>
+      <ereg regexp=".*" search_in="hdr" header="CSeq:" assign_to="hdr_cseq"/>
+    </action>
+  </recv>
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 100 Trying
+      Via:[$hdr_via]
+      From:[$hdr_from]
+      To:[$hdr_to];tag=[service].[call_number]
+      [last_Call-ID:]
+      CSeq:[$hdr_cseq]
+      Contact: <sip:[local_ip]:[local_port]>
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 180 Ringing
+      Via:[$hdr_via]
+      From:[$hdr_from]
+      To:[$hdr_to];tag=[service].[call_number]
+      [last_Call-ID:]
+      CSeq:[$hdr_cseq]
+      Require: 100rel
+      RSeq: 1
+      Contact: <sip:[local_ip]:[local_port]>
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <recv request="PRACK" crlf="true" />
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      [last_Record-Route:]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <send retrans="500">
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      Via:[$hdr_via]
+      From:[$hdr_from]
+      To:[$hdr_to];tag=[service].[call_number]
+      [last_Call-ID:]
+      CSeq:[$hdr_cseq]
+      [last_Record-Route:]
+      Contact: <sip:[local_ip]:[local_port]>
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+
+    ]]>
+  </send>
+
+  <recv request="ACK" crlf="true" />
+
+  <pause milliseconds="300" />
+
+  <send retrans="500">
+    <![CDATA[
+
+      UPDATE [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      [routes]
+      From:[$hdr_to];tag=[service].[call_number]
+      To:[$hdr_from]
+      Call-ID: [call_id]
+      CSeq: 2 UPDATE
+      Contact: <sip:[local_ip]:[local_port]>
+      Max-Forwards: 70
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687638 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+
+    ]]>
+  </send>
+
+  <recv response="200" crlf="true" />
+
+  <recv request="BYE" crlf="true" rrs="true" />
+
+  <send retrans="500">
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      [last_Record-Route:]
+      Contact: <sip:[local_ip]:[local_port]>
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <Reference variables="hdr_via,hdr_from,hdr_to,hdr_cseq" />
+  <ResponseTimeRepartition value="200, 500, 1000" />
+  <CallLengthRepartition value="500, 1000, 2000" />
+</scenario>
