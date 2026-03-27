@@ -3,8 +3,13 @@ name: Build SIPSsert Image
 on:
   workflow_dispatch:
     inputs:
-      version:
+      component:
         description: OpenSIPS Version to publish
+        type: choice
+        options:
+          - devel
+          - 3.6-nightly
+          - 3.4-nightly
         required: true
       tag:
         description: OpenSIPS SIPssert Tag to use
@@ -26,10 +31,9 @@ jobs:
     - name: Publish OpenSIPS SIPssert Docker image
       uses: OpenSIPS/docker-opensips/.github/actions/docker-opensips-publish@main
       with:
-        version: ${{ github.event.inputs.version }}
+        component: ${{ github.event.inputs.component }}
         tag: ${{ github.event.inputs.tag }}
         cli: false
-        build: nightly
         modules: ${{ steps.fetch_modules.outputs.MODULES }}
         docker-username: ${{ secrets.DOCKER_USERNAME }}
         docker-token: ${{ secrets.DOCKER_TOKEN }}
