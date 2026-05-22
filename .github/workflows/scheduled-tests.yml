@@ -1,0 +1,36 @@
+name: Schedule OpenSIPS Conformance Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * Mon'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  run-tests:
+    name: Run tests for ${{ matrix.branch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Each branch here must have a dispatchable run-tests workflow.
+        branch:
+          - main
+          - '4.0'
+          - '3.6'
+
+    steps:
+      - name: Dispatch test workflow
+        uses: actions/github-script@v8
+        env:
+          TEST_BRANCH: ${{ matrix.branch }}
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'run-tests.yml',
+              ref: process.env.TEST_BRANCH,
+            });
