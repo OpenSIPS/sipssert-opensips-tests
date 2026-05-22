@@ -1,9 +1,5 @@
 name: Build SIPSsert Image
 
-env:
-  COMPONENT: devel
-  TAG: sipssert
-
 on:
   workflow_dispatch:
 
@@ -23,8 +19,8 @@ jobs:
     - name: Publish OpenSIPS SIPssert Docker image
       uses: OpenSIPS/docker-opensips/.github/actions/docker-opensips-publish@main
       with:
-        component: $COMPONENT
-        tag: $TAG
+        component: ${{ github.ref_name == github.event.repository.default_branch && 'devel' || format('{0}-nightly', github.ref_name) }}
+        tag: ${{ github.ref_name == github.event.repository.default_branch && 'sipssert' || format('sipssert-{0}', github.ref_name) }}
         cli: false
         modules: ${{ steps.fetch_modules.outputs.MODULES }}
         docker-username: ${{ secrets.DOCKER_USERNAME }}
