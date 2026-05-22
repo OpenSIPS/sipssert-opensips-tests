@@ -11,8 +11,6 @@ on:
       - completed
     branches:
       - 3.6
-  schedule:
-    - cron: '0 2 * * Mon'
   workflow_call:
   workflow_dispatch:
 
