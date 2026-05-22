@@ -24,7 +24,7 @@ jobs:
     steps:
 
     - name: Checkout Tests repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository }}
         path: tests
@@ -59,13 +59,13 @@ jobs:
     if: always()
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository }}
         path: tests
 
     - name: Download All Artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         path: junit-reports
 
@@ -78,13 +78,13 @@ jobs:
         OUTPUT_FILE: junit-final-report.xml
 
     - name: Upload JUnit XML
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: junit-final-report
         path: junit-final-report.xml
 
     - name: Print tests summary
-      uses: mikepenz/action-junit-report@v5
+      uses: mikepenz/action-junit-report@v6
       id: summary
       if: success() || failure()
       with:
