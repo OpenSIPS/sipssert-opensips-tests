@@ -1,0 +1,28 @@
+name: Run Tests After SIPSsert Image Build
+
+on:
+  workflow_run:
+    workflows:
+      - Build SIPSsert Image
+    types:
+      - completed
+
+permissions:
+  actions: write
+
+jobs:
+  run-tests:
+    name: Run tests for ${{ github.event.workflow_run.head_branch }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dispatch test workflow
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'run-tests.yml',
+              ref: context.payload.workflow_run.head_branch,
+            });
