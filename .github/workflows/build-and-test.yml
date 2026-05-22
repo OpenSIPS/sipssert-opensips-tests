@@ -1,8 +1,8 @@
 name: Build SIPSsert Image
 
 env:
-  COMPONENT: devel
-  TAG: sipssert
+  COMPONENT: 4.0-nightly
+  TAG: sipssert-4.0
 
 on:
   workflow_dispatch:
