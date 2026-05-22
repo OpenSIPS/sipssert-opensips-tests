@@ -26,7 +26,7 @@ jobs:
     - name: Checkout Tests repo
       uses: actions/checkout@v4
       with:
-        repository: OpenSIPS/sipssert-opensips-tests
+        repository: ${{ github.repository }}
         path: tests
 
     - name: Read and parse YAML file
@@ -46,7 +46,7 @@ jobs:
       uses: OpenSIPS/SIPssert/.github/actions/Prepare_SIPssert@main
       with:
         sipssert-repo: OpenSIPS/SIPSsert
-        tests-repo: OpenSIPS/sipssert-opensips-tests
+        tests-repo: ${{ github.repository }}
 
     - name: Run Test
       uses: OpenSIPS/SIPssert/.github/actions/Run_Tests@main
@@ -61,7 +61,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        repository: OpenSIPS/sipssert-opensips-tests
+        repository: ${{ github.repository }}
         path: tests
 
     - name: Download All Artifacts
