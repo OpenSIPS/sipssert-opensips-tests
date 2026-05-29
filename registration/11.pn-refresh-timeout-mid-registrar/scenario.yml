@@ -1,0 +1,42 @@
+---
+timeout: 20
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+    networks:
+      - network: osbr1
+        ip: {{ opensips_ip_osbr1 }}
+    sockets:
+      - udp:{{ opensips_ip_osbr1 }}:{{ opensips_port }}
+
+  - name: Upstream registrar
+    type: uas-sipp
+    username: {{ username }}
+    config_file: scripts/upstream-registrar-invite.xml
+    ip: {{ uas_ip_osbr1 }}
+    port: {{ uas_port }}
+    network: osbr1
+    require: OpenSIPS
+
+  - name: Register PN contact
+    type: uac-sipp
+    ip: {{ uas_ip }}
+    port: 5081
+    username: {{ username }}
+    config_file: scripts/sipp-register-pn.xml
+    require:
+      - started:
+          task: OpenSIPS
+          wait: 0.5
+      - started:
+          task: Upstream registrar
+          wait: 0.5
+
+  - name: MI check PN contact
+    type: opensips-mi
+    script: scripts/check-pn-contact.py
+    require:
+      after:
+        task: Register PN contact
+        wait: 0.5
