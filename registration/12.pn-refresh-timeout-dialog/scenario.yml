@@ -1,0 +1,39 @@
+---
+timeout: 20
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: Register PN contact
+    type: uac-sipp
+    ip: {{ uas_ip }}
+    port: {{ uas_port }}
+    username: {{ username }}
+    config_file: scripts/sipp-register-pn.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 0.5
+
+  - name: MI check PN contact
+    type: opensips-mi
+    script: scripts/check-pn-contact.py
+    require:
+      after:
+        task: Register PN contact
+        wait: 0.5
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: scripts/uac-pn-timeout.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    require:
+      - after:
+          task: MI check PN contact
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
