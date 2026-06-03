@@ -9,6 +9,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
     - uses: actions/checkout@v6
 
@@ -25,3 +29,4 @@ jobs:
         modules: ${{ steps.fetch_modules.outputs.MODULES }}
         docker-username: ${{ secrets.DOCKER_USERNAME }}
         docker-token: ${{ secrets.DOCKER_TOKEN }}
+        ghcr-token: ${{ secrets.GITHUB_TOKEN }}
