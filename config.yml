@@ -31,6 +31,7 @@ defaults:
     mi_ip: {{ opensips_ip }}
   opensips-mi:
     mi_ip: {{ opensips_ip }}
+    image: ghcr.io/opensips/python-opensips
   opensips:
     ip: {{ opensips_ip }}
     image: ghcr.io/opensips/opensips:sipssert{% if opensips_version is defined %}-{{ opensips_version }}{% endif %}
