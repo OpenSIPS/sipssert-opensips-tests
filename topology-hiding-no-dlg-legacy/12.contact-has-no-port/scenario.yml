@@ -1,0 +1,48 @@
+---
+timeout: 10
+
+tasks:
+  - name: OpenSIPS
+    networks:
+      - network: public
+        ip: "{{ opensips_ip_pub }}"
+      - network: private
+        ip: "{{ opensips_ip_prv_1 }}"
+    type: opensips
+
+  - name: uas
+    type: uas-sipp
+    network: private
+    ip: "{{ uas_ip_prv }}"
+    port: 5060
+    config_file: scripts/uas.xml
+    args:
+      - -t
+      - u1
+      - -recv_timeout
+      - '120000'
+      - -trace_msg
+      - -trace_err
+      - -message_file
+      - /dev/stderr
+    require:
+      - started: OpenSIPS
+
+  - name: uac
+    type: uac-sipp
+    network: public
+    ip: "{{ uac_ip_pub }}"
+    config_file: scripts/uac.xml
+    remote: "{{ opensips_ip_pub }}:5060"
+    caller: caller
+    args:
+      - -t
+      - t1
+      - -recv_timeout
+      - '120000'
+      - -trace_msg
+      - -trace_err
+      - -message_file
+      - /dev/stderr
+    require:
+      - started: OpenSIPS
