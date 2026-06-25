@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+<!-- GH-3902 caller: INVITE -> (hold re-INVITE) -> (unhold re-INVITE) -> BYE,
+     through a record-routing proxy. rrs="true" captures the route set so the
+     in-dialog requests carry the proxy in a Route header (loose routing). -->
+<scenario name="gh3902 uac hold/unhold">
+
+  <send retrans="500">
+    <![CDATA[
+      INVITE sip:callee@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>
+      Call-ID: [call_id]
+      CSeq: 1 INVITE
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=caller 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 8
+      a=rtpmap:8 PCMA/8000
+      a=sendrecv
+    ]]>
+  </send>
+
+  <recv response="100" optional="true"/>
+  <recv response="180" optional="true"/>
+  <recv response="200" rtd="true" rrs="true"/>
+
+  <send>
+    <![CDATA[
+      ACK [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 1 ACK
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      [routes]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <pause milliseconds="1000"/>
+
+  <!-- ===== HOLD: re-INVITE, c=0.0.0.0 / a=sendonly ===== -->
+  <send retrans="500">
+    <![CDATA[
+      INVITE [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 2 INVITE
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      [routes]
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=caller 53655765 2353687638 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] 0.0.0.0
+      t=0 0
+      m=audio [media_port] RTP/AVP 8
+      a=rtpmap:8 PCMA/8000
+      a=sendonly
+    ]]>
+  </send>
+
+  <recv response="100" optional="true"/>
+  <recv response="200" rtd="true"/>
+
+  <send>
+    <![CDATA[
+      ACK [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 2 ACK
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      [routes]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <pause milliseconds="1000"/>
+
+  <!-- ===== UNHOLD: re-INVITE, active SDP / a=sendrecv ===== -->
+  <send retrans="500">
+    <![CDATA[
+      INVITE [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 3 INVITE
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      [routes]
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=caller 53655765 2353687639 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 8
+      a=rtpmap:8 PCMA/8000
+      a=sendrecv
+    ]]>
+  </send>
+
+  <recv response="100" optional="true"/>
+  <recv response="200" rtd="true"/>
+
+  <send>
+    <![CDATA[
+      ACK [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 3 ACK
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      [routes]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <pause milliseconds="1000"/>
+
+  <send retrans="500">
+    <![CDATA[
+      BYE [next_url] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: caller <sip:caller@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: callee <sip:callee@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 4 BYE
+      Contact: sip:caller@[local_ip]:[local_port]
+      Max-Forwards: 70
+      [routes]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <recv response="200" crlf="true"/>
+
+</scenario>

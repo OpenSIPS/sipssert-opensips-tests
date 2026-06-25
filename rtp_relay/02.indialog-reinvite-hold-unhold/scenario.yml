@@ -1,0 +1,93 @@
+---
+# GH-3902 rtp_relay -- in-dialog re-INVITE (hold / unhold). This is the issue
+# title: "in-dialog re-INVITE (hold/unhold) not re-anchored for proxied dialog".
+#
+# The caller establishes the transcoding call, then sends a hold re-INVITE and
+# an unhold re-INVITE. The checker counts the rtpengine ng OFFER commands (one
+# per INVITE -> 3 re-anchors) AND checks every OFFER still carries the callee
+# WebRTC profile (UDP/TLS/RTP/SAVPF). On affected OpenSIPS the re-INVITEs
+# re-anchor but each offer drops the profile to plain RTP/AVP (RED); with the
+# fix all three offers keep UDP/TLS/RTP/SAVPF (GREEN).
+
+timeout: 90
+
+tasks:
+  - name: rtpengine
+    type: generic
+    image: {{ rtpengine_image }}
+    ip: {{ rtpengine_ip }}
+    daemon: true
+    stop_timeout: 3
+    entrypoint: sh
+    # debian:slim base -> install the official Debian rtpengine-daemon package
+    # (sipwise upstream; userspace-only, no kernel dkms). policy-rc.d keeps the
+    # package postinst from starting a service; iproute2 provides `ss` for the
+    # readiness healthcheck below. Then run rtpengine in the foreground.
+    args: ["-c", "echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rtpengine-daemon iproute2 && exec rtpengine --table=-1 --interface={{ rtpengine_ip }} --listen-ng={{ rtpengine_ip }}:{{ rtpengine_ng_port }} --foreground --log-stderr --log-level=6"]
+    # healthy once the ng socket is bound, so dependents gate on readiness (not a
+    # fixed sleep) and the apt-install delay cannot race the proxy startup ping.
+    healthcheck:
+      test: "ss -lnu | grep -q :{{ rtpengine_ng_port }}"
+      interval: 2000000000
+      timeout: 2000000000
+      retries: 30
+
+  # host-networked sniffer on the osbr0 bridge device (see 01.initial-offer-savpf
+  # for why a bridge-attached -i any sidecar would not see inter-container ng).
+  - name: ng capture
+    type: generic
+    image: {{ capture_image }}
+    network: host
+    daemon: true
+    stop_timeout: 2
+    volumes:
+      - caps
+    entrypoint: sh
+    args: ["-c", "tcpdump -i osbr0 -n -s0 -U -w /caps/ng.pcap udp port {{ rtpengine_ng_port }}"]
+    require:
+      healthy: rtpengine
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      - healthy: rtpengine
+      - started:
+          task: ng capture
+          wait: 0.5
+
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    calls: 1
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  # ng checker: >= 3 OFFERs (INVITE + hold + unhold), all keeping the profile.
+  - name: ng checker
+    type: generic
+    image: {{ checker_image }}
+    volumes:
+      - caps
+    entrypoint: python3
+    args: ["/home/scripts/ng_checker.py", "/caps/ng.pcap", "count", "3", "offer", "--ng-port", "{{ rtpengine_ng_port }}"]
+    require:
+      after:
+        task: SIPP UAC
+        wait: 2
+
+volumes:
+  caps:
+    bind: /caps
+    mode: rw

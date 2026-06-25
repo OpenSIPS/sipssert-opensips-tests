@@ -12,6 +12,7 @@ tests:
   - presence
   - record-route
   - registration
+  - rtp_relay
   - startup
   - stir-shaken
   - topology-hiding

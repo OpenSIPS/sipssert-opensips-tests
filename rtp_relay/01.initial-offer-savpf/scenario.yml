@@ -1,0 +1,100 @@
+---
+# GH-3902 rtp_relay -- initial SDP-in-INVITE offer.
+#
+# A plain SIP caller (RTP/AVP) calls a callee whose WebRTC profile
+# (UDP/TLS/RTP/SAVPF + ICE=force) is provisioned in branch_route[webrtc]. The
+# checker asserts the ng OFFER OpenSIPS sends to rtpengine carries that profile.
+# On affected OpenSIPS the branch-provisioned callee leg is not linked before
+# the offer, so the profile is dropped (RED). With the fix it survives (GREEN).
+#
+# The checker inspects what OpenSIPS ASKS rtpengine (transport-protocol / ICE),
+# independent of any real WebRTC endpoint -- so a trivial SIP UAS suffices.
+
+timeout: 90
+
+tasks:
+  # rtpengine media proxy (userspace only, no kernel module / privileges).
+  - name: rtpengine
+    type: generic
+    image: {{ rtpengine_image }}
+    ip: {{ rtpengine_ip }}
+    daemon: true
+    stop_timeout: 3
+    entrypoint: sh
+    # debian:slim base -> install the official Debian rtpengine-daemon package
+    # (sipwise upstream; userspace-only, no kernel dkms). policy-rc.d keeps the
+    # package postinst from starting a service; iproute2 provides `ss` for the
+    # readiness healthcheck below. Then run rtpengine in the foreground.
+    args: ["-c", "echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rtpengine-daemon iproute2 && exec rtpengine --table=-1 --interface={{ rtpengine_ip }} --listen-ng={{ rtpengine_ip }}:{{ rtpengine_ng_port }} --foreground --log-stderr --log-level=6"]
+    # healthy once the ng socket is bound, so dependents gate on readiness (not a
+    # fixed sleep) and the apt-install delay cannot race the proxy startup ping.
+    healthcheck:
+      test: "ss -lnu | grep -q :{{ rtpengine_ng_port }}"
+      interval: 2000000000
+      timeout: 2000000000
+      retries: 30
+
+  # Sidecar that captures the rtpengine ng UDP stream into a shared rw volume.
+  # It runs with HOST networking and sniffs the osbr0 bridge DEVICE, so it sees
+  # the OpenSIPS<->rtpengine traffic between two other containers (a normal
+  # bridge-attached sidecar would only see its own traffic). The built-in
+  # sipssert tracer also captures capture.pcap on osbr0, but only finalizes it
+  # after the scenario ends, so a mid-run checker task cannot read it -- hence
+  # this dedicated capture into a volume the checker then mounts.
+  - name: ng capture
+    type: generic
+    image: {{ capture_image }}
+    network: host
+    daemon: true
+    stop_timeout: 2
+    volumes:
+      - caps
+    entrypoint: sh
+    args: ["-c", "tcpdump -i osbr0 -n -s0 -U -w /caps/ng.pcap udp port {{ rtpengine_ng_port }}"]
+    require:
+      healthy: rtpengine
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      - healthy: rtpengine
+      - started:
+          task: ng capture
+          wait: 0.5
+
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    calls: 1
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  # ng checker: PASS iff the OFFER carries UDP/TLS/RTP/SAVPF + ICE=force.
+  - name: ng checker
+    type: generic
+    image: {{ checker_image }}
+    volumes:
+      - caps
+    entrypoint: python3
+    args: ["/home/scripts/ng_checker.py", "/caps/ng.pcap", "savpf", "--ng-port", "{{ rtpengine_ng_port }}"]
+    require:
+      after:
+        task: SIPP UAC
+        wait: 2
+
+volumes:
+  caps:
+    bind: /caps
+    mode: rw

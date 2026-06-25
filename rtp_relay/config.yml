@@ -1,0 +1,45 @@
+---
+# rtp_relay test-set config.
+#
+# This mirrors the suite-wide config.yml (sipssert does NOT deep-merge the
+# root config.yml into a test set -- each set carries its own full block, the
+# same way dialog/config.yml duplicates it). The only additions over the
+# stock block are the rtpengine defaults at the bottom.
+
+bridge_networks:
+  - name: osbr0
+    # pin the host-side bridge device name so the capture sidecar (which runs
+    # with host networking) can tcpdump -i osbr0 and see inter-container traffic
+    device: osbr0
+    subnet: {{ network_range }}
+    gateway: {{ network_gateway }}
+  - name: osbr1
+    device: osbr1
+    subnet: {{ network_range_osbr1 }}
+    gateway: {{ network_gateway_osbr1 }}
+
+# default network that should be used by all scenarios
+network: osbr0
+
+# global defaults
+defaults:
+  uac-sipp:
+    port: {{ uac_port }}
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    keys:
+      domain: {{ opensips_ip }}
+  uas-sipp:
+    ip: {{ uas_ip }}
+    port: {{ uas_port }}
+    keys:
+      domain: {{ opensips_ip }}
+  opensips-cli:
+    mi_ip: {{ opensips_ip }}
+  opensips-mi:
+    mi_ip: {{ opensips_ip }}
+    image: ghcr.io/opensips/python-opensips
+  opensips:
+    ip: {{ opensips_ip }}
+    image: '{{ opensips_image if opensips_image is defined else "ghcr.io/opensips/opensips:sipssert" ~ ("-" ~ opensips_version if opensips_version is defined else "") }}'
+    socket: udp:{{ opensips_ip }}:{{ opensips_port }}
+    stop_timeout: 5
