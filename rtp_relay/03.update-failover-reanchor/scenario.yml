@@ -16,7 +16,7 @@
 # enough to exercise the self-generated re-INVITE / profile-carry path. A real
 # node-down event is not required.
 
-timeout: 120
+timeout: 360
 
 tasks:
   - name: rtpengine
@@ -30,14 +30,14 @@ tasks:
     # (sipwise upstream; userspace-only, no kernel dkms). policy-rc.d keeps the
     # package postinst from starting a service; iproute2 provides `ss` for the
     # readiness healthcheck below. Then run rtpengine in the foreground.
-    args: ["-c", "echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rtpengine-daemon iproute2 && exec rtpengine --table=-1 --interface={{ rtpengine_ip }} --listen-ng={{ rtpengine_ip }}:{{ rtpengine_ng_port }} --foreground --log-stderr --log-level=6"]
+    args: ["-c", "echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rtpengine-daemon iproute2 && exec rtpengine --table=-1 --interface={{ rtpengine_ip }} --listen-ng={{ rtpengine_ip }}:{{ rtpengine_ng_port }} --foreground --log-stderr"]
     # healthy once the ng socket is bound, so dependents gate on readiness (not a
     # fixed sleep) and the apt-install delay cannot race the proxy startup ping.
     healthcheck:
       test: "ss -lnu | grep -q :{{ rtpengine_ng_port }}"
       interval: 2000000000
       timeout: 2000000000
-      retries: 30
+      retries: 120
 
   # host-networked sniffer on osbr0; captures BOTH the ng port and the MI
   # datagram port so the checker can locate the rtp_relay_update packet and split

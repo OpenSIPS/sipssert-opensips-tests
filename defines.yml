@@ -16,3 +16,14 @@ mysql_root_host: 192.168.52.%
 username: testing
 password: T3st|n6
 nonce: 035cf70b1c4fcf4731150330410151743443
+
+# --- rtp_relay / rtpengine (used only by the rtp_relay test set) ---
+rtpengine_ip: 192.168.52.4
+rtpengine_ng_port: 22222
+# Stock Debian base; the rtp_relay rtpengine task apt-installs the
+# rtpengine-daemon package (sipwise upstream, userspace-only) at start.
+rtpengine_image: debian:trixie-slim
+# packet-capture sidecar (host networking, sniffs the osbr0 bridge device)
+capture_image: nicolaka/netshoot
+# pure-python ng checker; python-opensips already ships python3
+checker_image: ghcr.io/opensips/python-opensips
