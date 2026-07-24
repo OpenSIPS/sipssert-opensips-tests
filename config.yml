@@ -34,7 +34,7 @@ defaults:
     image: ghcr.io/opensips/python-opensips
   opensips:
     ip: {{ opensips_ip }}
-    image: '{{ opensips_image if opensips_image is defined else "ghcr.io/opensips/opensips:sipssert" ~ ("-" ~ opensips_version if opensips_version is defined else "") }}'
+    image: '{{ opensips_image if opensips_image is defined else "ghcr.io/opensips/opensips-sipssert:" ~ (opensips_version if opensips_version is defined else "latest") }}'
     socket: udp:{{ opensips_ip }}:{{ opensips_port }}
     stop_timeout: 5
   mysql:
