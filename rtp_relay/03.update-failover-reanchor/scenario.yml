@@ -1,0 +1,115 @@
+---
+# GH-3902 rtp_relay -- rtp_relay_update node-failover re-anchor.
+#
+# This is the trigger the maintainer (@razvancrainea) specifically asked about:
+# the re-INVITE is NOT UAC-initiated -- OpenSIPS generates it itself from the
+# rtp_relay_update MI command (rtpengine node failover / watchdog), re-offering
+# the call onto a surviving node. We establish a transcoding call, keep it up,
+# fire rtp_relay_update over mi_datagram (udp:8088), and let OpenSIPS re-INVITE
+# the caller then the callee. The checker splits the captured ng stream at the MI
+# packet and checks the post-failover re-anchor offer/answer still carries the
+# callee WebRTC profile (UDP/TLS/RTP/SAVPF). On affected OpenSIPS the re-anchor
+# is plain RTP/AVP (RED -> a real WebRTC node would 488 and the call drops on
+# failover); with the fix it preserves the profile (GREEN).
+#
+# NB: single rtpengine node -- the MI re-anchors onto the same node, which is
+# enough to exercise the self-generated re-INVITE / profile-carry path. A real
+# node-down event is not required.
+
+timeout: 360
+
+tasks:
+  - name: rtpengine
+    type: generic
+    image: {{ rtpengine_image }}
+    ip: {{ rtpengine_ip }}
+    daemon: true
+    stop_timeout: 3
+    entrypoint: sh
+    # debian:slim base -> install the official Debian rtpengine-daemon package
+    # (sipwise upstream; userspace-only, no kernel dkms). policy-rc.d keeps the
+    # package postinst from starting a service; iproute2 provides `ss` for the
+    # readiness healthcheck below. Then run rtpengine in the foreground.
+    args: ["-c", "echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rtpengine-daemon iproute2 && exec rtpengine --table=-1 --interface={{ rtpengine_ip }} --listen-ng={{ rtpengine_ip }}:{{ rtpengine_ng_port }} --foreground --log-stderr"]
+    # healthy once the ng socket is bound, so dependents gate on readiness (not a
+    # fixed sleep) and the apt-install delay cannot race the proxy startup ping.
+    healthcheck:
+      test: "ss -lnu | grep -q :{{ rtpengine_ng_port }}"
+      interval: 2000000000
+      timeout: 2000000000
+      retries: 120
+
+  # host-networked sniffer on osbr0; captures BOTH the ng port and the MI
+  # datagram port so the checker can locate the rtp_relay_update packet and split
+  # the stream at it.
+  - name: ng capture
+    type: generic
+    image: {{ capture_image }}
+    network: host
+    daemon: true
+    stop_timeout: 2
+    volumes:
+      - caps
+    entrypoint: sh
+    args: ["-c", "tcpdump -i osbr0 -n -s0 -U -w /caps/ng.pcap 'udp and (port {{ rtpengine_ng_port }} or port 8088)'"]
+    require:
+      healthy: rtpengine
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      - healthy: rtpengine
+      - started:
+          task: ng capture
+          wait: 0.5
+
+  # both legs run long enough to receive the server-generated re-INVITE.
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    duration: 12000
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    calls: 1
+    duration: 12000
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  # fire the node-failover re-anchor once the call is confirmed and SDP stored.
+  - name: MI rtp_relay_update
+    type: opensips-mi
+    mi_type: datagram
+    mi_port: 8088
+    args: rtp_relay_update
+    require:
+      started:
+        task: SIPP UAC
+        wait: 3
+
+  # checker: after the MI packet, a re-anchor offer/answer must keep SAVPF.
+  - name: ng checker
+    type: generic
+    image: {{ checker_image }}
+    volumes:
+      - caps
+    entrypoint: python3
+    args: ["/home/scripts/ng_checker.py", "/caps/ng.pcap", "failover", "--ng-port", "{{ rtpengine_ng_port }}", "--mi-port", "8088"]
+    require:
+      after:
+        task: MI rtp_relay_update
+        wait: 4
+
+volumes:
+  caps:
+    bind: /caps
+    mode: rw

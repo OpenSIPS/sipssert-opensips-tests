@@ -1,9 +1,14 @@
 ---
 bridge_networks:
   - name: osbr0
+    # pin the host-side bridge device name so a host-networked capture
+    # sidecar (rtp_relay set) can tcpdump -i osbr0 and see inter-container
+    # traffic; harmless for every other set
+    device: osbr0
     subnet: {{ network_range }}
     gateway: {{ network_gateway }}
   - name: osbr1
+    device: osbr1
     subnet: {{ network_range_osbr1 }}
     gateway: {{ network_gateway_osbr1 }}
 

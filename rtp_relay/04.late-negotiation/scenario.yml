@@ -1,0 +1,93 @@
+---
+# GH-3902 rtp_relay -- no-SDP late negotiation (delayed offer, answer axis).
+#
+# The caller sends an INVITE with NO SDP, so the callee offers SDP in its 200 OK
+# and the caller answers in the ACK. rtp_relay marks the session "late" and
+# emits the rtpengine OFFER on the RESPONSE path -- the OTHER initial_cb branch.
+# Because the callee is the offerer, offer/answer roles invert: the
+# branch-provisioned callee WebRTC profile must ride the leg=caller ANSWER. The
+# checker therefore checks the ANSWER axis. On affected OpenSIPS the answer drops
+# the profile (RED); the fix that links the callee leg in BOTH initial_cb
+# branches preserves it (GREEN). This is the path that needs the full fix, not
+# just the REQUEST_FWDED-only minimal variant.
+
+timeout: 300
+
+tasks:
+  - name: rtpengine
+    type: generic
+    image: {{ rtpengine_image }}
+    ip: {{ rtpengine_ip }}
+    daemon: true
+    stop_timeout: 3
+    entrypoint: sh
+    # debian:slim base -> install the official Debian rtpengine-daemon package
+    # (sipwise upstream; userspace-only, no kernel dkms). policy-rc.d keeps the
+    # package postinst from starting a service; iproute2 provides `ss` for the
+    # readiness healthcheck below. Then run rtpengine in the foreground.
+    args: ["-c", "echo 'exit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rtpengine-daemon iproute2 && exec rtpengine --table=-1 --interface={{ rtpengine_ip }} --listen-ng={{ rtpengine_ip }}:{{ rtpengine_ng_port }} --foreground --log-stderr"]
+    # healthy once the ng socket is bound, so dependents gate on readiness (not a
+    # fixed sleep) and the apt-install delay cannot race the proxy startup ping.
+    healthcheck:
+      test: "ss -lnu | grep -q :{{ rtpengine_ng_port }}"
+      interval: 2000000000
+      timeout: 2000000000
+      retries: 120
+
+  - name: ng capture
+    type: generic
+    image: {{ capture_image }}
+    network: host
+    daemon: true
+    stop_timeout: 2
+    volumes:
+      - caps
+    entrypoint: sh
+    args: ["-c", "tcpdump -i osbr0 -n -s0 -U -w /caps/ng.pcap udp port {{ rtpengine_ng_port }}"]
+    require:
+      healthy: rtpengine
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      - healthy: rtpengine
+      - started:
+          task: ng capture
+          wait: 0.5
+
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    calls: 1
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  # ng checker: at least 1 OFFER, and every ANSWER keeps UDP/TLS/RTP/SAVPF.
+  - name: ng checker
+    type: generic
+    image: {{ checker_image }}
+    volumes:
+      - caps
+    entrypoint: python3
+    args: ["/home/scripts/ng_checker.py", "/caps/ng.pcap", "count", "1", "answer", "--ng-port", "{{ rtpengine_ng_port }}"]
+    require:
+      after:
+        task: SIPP UAC
+        wait: 2
+
+volumes:
+  caps:
+    bind: /caps
+    mode: rw
