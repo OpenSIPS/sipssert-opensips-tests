@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- This is the default SIPp scenario for a UAS, which is the
+     termination of a call. -->
+
+<scenario name="SIPp Call UAS">
+
+  <recv request="INVITE" rrs="true">
+    <action>
+      <ereg regexp=" &lt;(sip|sips)\:(.*)(;transport=(tcp|TCP|udp|UDP|tls|TLS))?(.*)&gt;" search_in="hdr" header="Contact:" assign_to="dummy,ct_scheme,contact_uri,ct_transport,dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Record-Route:" occurence="1" check_it_inverse="true" assign_to="dummy"/>
+
+      <ereg regexp="(.*)" search_in="hdr" header="Via:" occurence="1" check_it="true" assign_to="dummy,via1,dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Via:" occurence="2" check_it_inverse="true" assign_to="dummy" />
+    </action>
+  </recv>
+
+  <nop>
+    <action>
+      <assignstr assign_to="contact" value="[$ct_scheme]:[$contact_uri][$ct_transport]" />
+      <assignstr assign_to="route_headers" value="[routes]" />
+    </action>
+  </nop>
+
+  <Reference variables="route_headers,contact" />
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:];tag=SIPpTag89[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Record-Route: <sip:10.100.0.1:8080;transport=tls;custom;lr>
+      Record-Route: <sip:[local_ip]:[local_port];transport=tcp;lr>
+      Contact: <sip:sipp_call_uas@10.200.100.50;transport=tcp;param=one>
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [service]
+      s=-
+      c=IN IP[media_ip_type] [service]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+    ]]>
+  </send>
+
+  <recv request="ACK">
+    <action>
+      <ereg regexp="(.*)" search_in="hdr" header="Via:" occurence="1" check_it="true" assign_to="dummy,via1,dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Via:" occurence="2" check_it_inverse="true" assign_to="dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Record-Route:" occurence="1" check_it_inverse="true" assign_to="dummy"/>
+    </action>
+  </recv>
+
+  <recv request="UPDATE" rrs="true">
+    <action>
+      <ereg regexp="(.*)" search_in="hdr" header="Via:" occurence="1" check_it="true" assign_to="dummy,via1,dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Via:" occurence="2" check_it_inverse="true" assign_to="dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Record-Route:" occurence="1" check_it_inverse="true" assign_to="dummy"/>
+    </action>
+  </recv>
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_cseq:]
+      Content-Type: application/sdp
+      Contact: <sip:sipp_call_uas@[local_ip]:[local_port];transport=tcp;param=one>
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <send retrans="1000" start_txn="UPDATE">
+    <![CDATA[
+
+      UPDATE [$contact] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-04
+      [last_To:]
+      [last_From:]
+      [last_Call-ID:]
+      [$route_headers]
+      CSeq: 502 UPDATE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Contact: <sip:sipp_call_uas@[local_ip]:[local_port];transport=tcp;param=one>
+      Content-Disposition: session; handling=required
+      Content-Type: application/sdp
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <recv response="200" response_txn="UPDATE" rrs="true"/>
+
+  <recv request="BYE">
+    <action>
+      <ereg regexp="(.*)" search_in="hdr" header="Via:" occurence="1" check_it="true" assign_to="dummy,via1,dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Via:" occurence="2" check_it_inverse="true" assign_to="dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Record-Route:" occurence="1" check_it_inverse="true" assign_to="dummy"/>
+    </action>
+  </recv>
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_from:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_cseq:]
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+</scenario>

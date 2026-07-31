@@ -1,0 +1,21 @@
+---
+# Universal network definitions for all tests
+bridge_networks:
+  - name: testnet
+    subnet: "{{ network_range }}"
+    gateway: "{{ network_gateway }}"
+  
+  - name: osbr1
+    subnet: "{{ network_range_osbr1 }}"
+    gateway: "{{ network_gateway_osbr1 }}"
+
+  - name: private
+    subnet: "{{ network_range_prv }}"
+    gateway: "{{ network_gateway_prv }}"
+  
+  - name: public
+    subnet: "{{ network_range_pub }}"
+    gateway: "{{ network_gateway_pub }}"
+
+# Default network for all tasks
+network: testnet

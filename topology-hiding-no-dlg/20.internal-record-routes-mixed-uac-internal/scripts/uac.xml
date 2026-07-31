@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- This is the default SIPp scenario for a UAC, which is the
+     originator of a call. The target of the call will be read
+     from a CSV file. The CSV should be a simple list of the target
+     numbers with any ordering (SEQUENTIAL, RANDOM, USER). -->
+
+<scenario name="SIPp Call UAC">
+
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99[call_number]
+      To: sip:+155523400001@[remote_ip]:[remote_port]
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-01
+      Record-Route: <sip:[local_ip]:[local_port];transport=tcp;lr>
+      Record-Route: <sips:\x5B2001:db8:abcd:abc:ab::123:5678]:9090;transport=tls;r2=on;lr>
+      Record-Route: <sip:prv.acme.com;transport=tls;r2=on;lr>
+      Contact: <sip:+13175000120@10.0.0.120:9000;transport=sctp>
+      Call-ID: [call_id]
+      CSeq: 500 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=- 123431 776279 IN IP[local_ip_type] [service]
+      s=-
+      c=IN IP[media_ip_type] [service]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+      a=sendrecv
+    ]]>
+  </send>
+
+  <recv response="200" response_txn="INVITE" rrs="true">
+    <action>
+      <ereg regexp=" &lt;(sip|sips)\:(.*)(;transport=(tcp|TCP|udp|UDP|tls|TLS))?(.*)&gt;" search_in="hdr" header="Contact:" assign_to="dummy,ct_scheme,contact_uri,ct_transport,dummy" />
+      <ereg regexp=" &lt;(.*)&gt;" search_in="hdr" header="Record-Route:" occurence="1" check_it="true" assign_to="dummy,auto_route,dummy" />
+      <ereg regexp=" &lt;(.*)&gt;" search_in="hdr" header="Record-Route:" occurence="2" check_it="true" assign_to="dummy,dummy,dummy" />
+      <ereg regexp=" &lt;(.*)&gt;" search_in="hdr" header="Record-Route:" occurence="3" check_it="true" assign_to="dummy,dummy,dummy" />
+      <ereg regexp=" &lt;(.*)&gt;" search_in="hdr" header="Record-Route:" occurence="4" check_it="true" assign_to="dummy,dummy,dummy" />
+      <ereg regexp="(.+)" search_in="hdr" header="Record-Route:" occurence="5" check_it_inverse="true" assign_to="dummy"/>
+    </action>
+  </recv>
+
+  <nop>
+    <action>
+      <assignstr assign_to="contact" value="[$ct_scheme]:[$contact_uri][$ct_transport]" />
+    </action>
+  </nop>
+
+  <Reference variables="dummy" />
+
+  <!-- <pause milliseconds="100"/> -->
+
+
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK [$contact] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-02
+      [last_To:]
+      [last_From:]
+      [last_Call-ID:]
+      Route: <[$auto_route]>
+      CSeq: 500 ACK      
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <send retrans="1000" start_txn="UPDATE">
+    <![CDATA[
+
+      UPDATE [$contact] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-04
+      [last_To:]
+      [last_From:]
+      [last_Call-ID:]
+      Route: <[$auto_route]>
+      CSeq: 501 UPDATE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Type: application/sdp
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <recv response="200" response_txn="UPDATE" rrs="true">
+    <action>
+      <ereg regexp=" &lt;(sip|sips)\:(.*)(;transport=(tcp|TCP|udp|UDP|tls|TLS))?(.*)&gt;" search_in="hdr" header="Contact:" assign_to="dummy,dummy,dummy,dummy,dummy" />
+      <ereg regexp="Record-Route" search_in="msg" check_it_inverse="true" assign_to="dummy"/>
+    </action>
+  </recv>
+
+  <recv request="UPDATE" rrs="true">
+    <action>
+      <ereg regexp=" &lt;(sip|sips)\:(.*)(;transport=(tcp|TCP|udp|UDP|tls|TLS))?(.*)&gt;" search_in="hdr" header="Contact:" assign_to="dummy,dummy,dummy,dummy,dummy" />
+      <ereg regexp="Record-Route" search_in="msg" check_it_inverse="true" assign_to="dummy"/>
+      <ereg regexp="&lt;sips:\[([0-9a-fA-F:]+)\](.*)&gt;" search_in="hdr" header="Route:" check_it="true" assign_to="dummy,dummy" />
+      <ereg regexp="&lt;sip:prv\.acme\.com(.*)&gt;" search_in="hdr" header="Route:" check_it="true" assign_to="dummy,dummy" />
+      <ereg regexp="thinfo=" search_in="hdr" header="Route:" check_it_inverse="true" assign_to="dummy"/>
+    </action>
+  </recv>
+
+  <Reference variables="dummy" />
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_cseq:]
+      Content-Type: application/sdp
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <Reference variables="dummy" />
+
+  <pause milliseconds="200"/>
+
+  <send start_txn="bye">
+    <![CDATA[
+
+      BYE [$contact] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-05
+      Route: <[$auto_route]>
+      [last_To:]
+      [last_From:]
+      [last_Call-ID:]
+      CSeq: 700 BYE
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <recv response="200" response_txn="bye"/>
+
+</scenario>

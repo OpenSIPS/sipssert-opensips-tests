@@ -1,0 +1,35 @@
+---
+# Default network (testnet) - used by most tests
+network_range: 192.168.52.0/24
+network_gateway: 192.168.52.254
+opensips_ip: 192.168.52.1
+opensips_port: 5060
+uac_port: 5040
+uas_ip: 192.168.52.3
+uas_port: 5080
+postgres_ip: 192.168.52.2
+username: service
+
+# Network osbr1 - used by test 03
+network_range_osbr1: 192.168.53.0/24
+network_gateway_osbr1: 192.168.53.254
+opensips_ip_osbr1: 192.168.53.1
+uas_ip_osbr1: 192.168.53.3
+
+# Network internal - used by test 08
+network_range_prv: 10.0.0.0/8
+network_gateway_prv: 10.0.0.254
+opensips_ip_prv_1: 10.100.20.40
+opensips_ip_prv_2: 10.200.10.20
+uac_port: 5040
+uas_ip_prv: 10.50.100.10
+uas_port: 5080
+username: service
+uas_ip_pub: 203.0.200.50
+uac_ip_prv: 10.50.100.10
+
+# Network external - used by test 08
+network_range_pub: 203.0.0.0/16
+network_gateway_pub: 203.0.0.254
+opensips_ip_pub: 203.0.100.10
+uac_ip_pub: 203.0.200.50

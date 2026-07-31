@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<scenario name="SIPp UAC - thinfo malicious vectors (unrolled)">
+
+  <!-- =========================================================
+       Vector 01: mal_uri_count_zero
+       uri_count == 0 -> rejected in seq path
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 01: mal_uri_count_zero"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9QS0N1UmJXQJBPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v01
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v01
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v01
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 500 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9QS0N1UmJXQJBPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v01
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v01
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v01
+      Call-ID: [call_id]
+      CSeq: 500 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 02: mal_uri_count_255
+       uri_count=255 > 12 -> rejected before decode loop
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 02: mal_uri_count_255"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG+vS0N1UmJXQJBPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v02
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v02
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v02
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 501 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG+vS0N1UmJXQJBPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v02
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v02
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v02
+      Call-ID: [call_id]
+      CSeq: 501 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 03: mal_uri_count_overstated
+       claims 12 URIs, supplies 1 -> bounds underrun -> -1
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 03: mal_uri_count_overstated"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9cS0N1UmJXQJBPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v03
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v03
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v03
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 502 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9cS0N1UmJXQJBPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v03
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v03
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v03
+      Call-ID: [call_id]
+      CSeq: 502 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 04: mal_invalid_scheme
+       scheme bits = 6 (>URN_N) -> 'Invalid properties detected'
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 04: mal_invalid_scheme"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb0V1UmJXc1VtU2tQsA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v04
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v04
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v04
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 503 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb0V1UmJXc1VtU2tQsA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v04
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v04
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v04
+      Call-ID: [call_id]
+      CSeq: 503 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 05: mal_invalid_transport
+       transport bits = 0x30 (>WSS) -> garbage data rejected
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 05: mal_invalid_transport"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb3N1UmJXc1VtU2tQsA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v05
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v05
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v05
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 504 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb3N1UmJXc1VtU2tQsA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v05
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v05
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v05
+      Call-ID: [call_id]
+      CSeq: 504 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 06: mal_invalid_domain
+       domain bits = 0xC0 (>FQDN) -> garbage data rejected
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 06: mal_invalid_domain"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb4NUUWNQV0er SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v06
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v06
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v06
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 505 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb4NUUWNQV0er SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v06
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v06
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v06
+      Call-ID: [call_id]
+      CSeq: 505 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 07: mal_fqdn_len_truncated
+       FQDN length byte=255 with no data -> read bounds guard -> -1
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 07: mal_fqdn_len_truncated"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb8OLcGBRUFB8lA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v07
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v07
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v07
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 506 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9Rb8OLcGBRUFB8lA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v07
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v07
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v07
+      Call-ID: [call_id]
+      CSeq: 506 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 08: mal_dual_missing_uri2props
+       IS_DUAL_URI set, uri2 props byte absent -> bounds guard -> -1
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 08: mal_dual_missing_uri2props"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RL0N1UmJXc1VtU2tQsA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v08
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v08
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v08
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 507 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RL0N1UmJXc1VtU2tQsA-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v08
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v08
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v08
+      Call-ID: [call_id]
+      CSeq: 507 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 09: mal_decode_buffer_pressure
+       12 maximal URIs -> exercises decode output bounds guard
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 09: mal_decode_buffer_pressure"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9ccMOLESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVkBEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1EZ4SEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhGQvIsRIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhWQES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURftOsFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CixEgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFZARLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNRGerKwVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgKLESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVcNCQAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASrBUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAosRIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhWQr5ACNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBKsFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4Ca9CeEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RkAI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEqwVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgKLr54SEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhGQAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISTNSQES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURnhISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuEZACNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBKsq5ARLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNRGeEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RcMOLESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVkBEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1EZ4SEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhGQvIsRIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhWQES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURftOsFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CixEgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFZARLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNRGerKwVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgKLESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVcNCQAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASrBUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAosRIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhWQr5ACNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBKsFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4Ca9CeEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RkAI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEqwVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgKLr54SEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhGQAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISTNSQES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURnhISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuEZACNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBKsq5ARLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNRGeT1FtQHBDpQ-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v09
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v09
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v09
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 508 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9ccMOLESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVLhEuAjURIBISFS4RLgI1ESASEhUuES4CNREgEhIVT1FtQHBDpQ-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v09
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v09
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v09
+      Call-ID: [call_id]
+      CSeq: 508 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 10: mal_socket_truncated
+       socket block only 2 bytes -> decode_socket fails
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 10: mal_socket_truncated"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RS0N1UmJXQJBvUQ-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v10
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v10
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v10
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 509 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RS0N1UmJXQJBvUQ-- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v10
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v10
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v10
+      Call-ID: [call_id]
+      CSeq: 509 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 11: mal_socket_bad_proto
+       socket proto bits = 7 (reserved) -> switch default -1
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 11: mal_socket_bad_proto"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RS0N1UmJXQJBIUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v11
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v11
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v11
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 510 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RS0N1UmJXQJBIUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v11
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v11
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v11
+      Call-ID: [call_id]
+      CSeq: 510 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 12: mal_params_len_overrun
+       HAS_PARAMS len=255 with 1 byte data -> read bounds guard -> -1
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 12: mal_params_len_overrun"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RZ0N1UmJXrCxPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v12
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v12
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v12
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 511 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9RZ0N1UmJXrCxPUW1AcEOl SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v12
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v12
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v12
+      Call-ID: [call_id]
+      CSeq: 511 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 13: mal_pure_garbage
+       arbitrary bytes -> header/props validation should reject
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 13: mal_pure_garbage"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9TkLyLr56srKuQr5C8i6+erKyrkK9PQnZTZUCX SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v13
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v13
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v13
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 512 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9TkLyLr56srKuQr5C8i6+erKyrkK9PQnZTZUCX SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v13
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v13
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v13
+      Call-ID: [call_id]
+      CSeq: 512 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 14: mal_uri_count
+       uri count greater than actual encoded uris - indicated 3 URIs, actual 2 URIs - rejected
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 14: mal_uricount_mismatch"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9TL0N1UmJXc3RuUmxHZ5Q- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v14
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v14
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v14
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 513 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo=VG9TL0N1UmJXc3RuUmxHZ5Q- SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v14
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v14
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v14
+      Call-ID: [call_id]
+      CSeq: 513 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <!-- =========================================================
+       Vector 15: mal_empty
+       empty value -> word64decode <= 0 -> rejected
+       ========================================================= -->
+  <nop>
+    <action>
+      <log message="thinfo vector 14: mal_empty"/>
+    </action>
+  </nop>
+  <send retrans="1000" start_txn="INVITE">
+    <![CDATA[
+
+      INVITE sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo= SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v14
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v14
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v14
+      Contact: <sip:+155545600002@[local_ip]:[local_port];transport=tcp>
+      Call-ID: [call_id]
+      CSeq: 513 INVITE
+      Max-Forwards: 70
+      Accept: application/sdp
+      Content-Disposition: session; handling=required
+      Content-Length: 0
+
+    ]]>
+  </send>
+  <recv response="500" response_txn="INVITE"/>
+  <send ack_txn="INVITE">
+    <![CDATA[
+
+      ACK sip:0000006892004@[remote_ip]:[remote_port];transport=tcp;thinfo= SIP/2.0
+      From: "INVITE" <sip:+155545600001@[local_ip]>;tag=SIPpTag99-[call_number]-v14
+      To: sip:+155523400001@[remote_ip]:[remote_port];tag=SIPpTag98-[call_number]-v14
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=z9hG4bK-[call_number]-v14
+      Call-ID: [call_id]
+      CSeq: 513 ACK
+      Max-Forwards: 70
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+</scenario>
