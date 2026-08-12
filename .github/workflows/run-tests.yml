@@ -55,6 +55,22 @@ jobs:
         repository: ${{ github.repository }}
         path: tests
 
+    - name: Print OpenSIPS version
+      run: |
+        opensips_version=$(sed -n 's/^opensips_version:[[:space:]]*//p' tests/defines.yml)
+        opensips_image="ghcr.io/opensips/opensips-sipssert:${opensips_version:-latest}"
+        version=$(docker run --rm --entrypoint opensips "$opensips_image" -V 2>&1)
+
+        {
+          echo "## OpenSIPS version"
+          echo
+          echo "Image: $opensips_image"
+          echo
+          echo '```'
+          echo "$version"
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
     - name: Download All Artifacts
       uses: actions/download-artifact@v8
       with:
