@@ -8,6 +8,7 @@ tests:
   - auth
   - b2b
   - dialog
+  - parser
   - permissions
   - presence
   - record-route

@@ -33,6 +33,18 @@ Tests OpenSIPS startup with the menuconfig generated Trunking Script.
 
 Tests OpenSIPS startup with the menuconfig generated Load-Balancer Script.
 
+### Parser
+
+Runs parser regression tests for malformed SIP bodies.
+
+#### 01.malformed-empty-part
+
+Checks that forwarding a malformed multipart body with an empty first part does not crash OpenSIPS.
+
+#### 02.empty-body-part
+
+Checks that forwarding a multipart body with a valid empty part does not crash OpenSIPS.
+
 ### Registrations
 
 Performs registration tests:
