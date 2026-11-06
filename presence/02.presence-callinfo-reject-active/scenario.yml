@@ -1,0 +1,71 @@
+---
+timeout: 45
+tasks:
+  - name: Init SQLite DB
+    type: generic
+    image: alpine
+    volumes: [db_sqlite]
+    args: cp /home/opensips.db /var/lib/opensips/db_sqlite/opensips.db
+
+  - name: OpenSIPS
+    type: opensips
+    volumes: [db_sqlite]
+    require:
+      after:
+        task: Init SQLite DB
+        wait: 1
+
+  - name: Initial seizure
+    type: uac-sipp
+    port: 5041
+    config_file: scripts/seize.xml
+    service: shared-line
+    require:
+      started:
+        task: OpenSIPS
+        wait: 1
+
+  - name: SIPP UAS
+    type: uas-sipp
+    config_file: scripts/uas.xml
+    require: OpenSIPS
+
+  - name: Active call
+    type: uac-sipp
+    config_file: scripts/uac.xml
+    service: callee
+    remote: {{ uas_ip }}:{{ uas_port }}
+    require:
+      - started:
+          task: Initial seizure
+          wait: 1
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+
+  - name: Check active appearance and expired seizure
+    type: opensips-mi
+    script: scripts/check-line.py
+    args: before
+    require:
+      started:
+        task: Active call
+        wait: 12
+
+  - name: Reject second seizure
+    type: uac-sipp
+    port: 5042
+    config_file: scripts/reseize.xml
+    service: shared-line
+    require: Check active appearance and expired seizure
+
+  - name: Check appearance still active
+    type: opensips-mi
+    script: scripts/check-line.py
+    args: after
+    require: Reject second seizure
+
+volumes:
+  db_sqlite:
+    bind: /var/lib/opensips/db_sqlite
+    mode: rw

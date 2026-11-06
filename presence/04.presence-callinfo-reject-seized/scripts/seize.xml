@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+<scenario name="Initial seizure">
+  <Global variables="domain"/>
+  <Reference variables="domain"/>
+  <send retrans="500"><![CDATA[
+SUBSCRIBE sip:[service]@[domain] SIP/2.0
+Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+Max-Forwards: 70
+From: <sip:shared-line@[domain]>;tag=[call_number]
+To: <sip:[service]@[domain]>
+Call-ID: [call_id]
+CSeq: 1 SUBSCRIBE
+Contact: <sip:sipp@[local_ip]:[local_port]>
+Event: line-seize
+Expires: 10
+Call-Info: <sip:[service]@[domain]>;appearance-index=1
+Content-Length: 0
+
+]]></send>
+  <recv response="200"/>
+  <recv request="NOTIFY" timeout="5000"/>
+  <send ><![CDATA[
+SIP/2.0 200 OK
+[last_Via:]
+[last_From:]
+[last_To:]
+[last_Call-ID:]
+[last_CSeq:]
+Content-Length: 0
+
+]]></send>
+</scenario>
