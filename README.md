@@ -212,6 +212,20 @@ Runs a scenario when an UPDATE message is being sent while the calls is being
 answered.
 
 Runs a call through dialog where the re-INVITE is challenged by the UAC.
+
+#### 21.prack-uac-auto-rr-in-18x
+
+Same as `11.prack-uac-auto-success`, but the UAS echoes the proxy's
+Record-Route in the reliable 180, as RFC 3261 12.1.1 requires. Checks that the
+automatic PRACK is sent to the UAS with no Route header (the only RR is the
+proxy's own).
+
+#### 22.prack-uac-auto-rr-in-18x-downstream
+
+Same as [21.prack-uac-auto-rr-in-18x](#21prack-uac-auto-rr-in-18x), but the
+180 also carries the Record-Route of a proxy downstream of OpenSIPS. Checks
+that the automatic PRACK carries only that Route, not the proxy's own.
+
 ### Topology Hiding
 
 Runs a set of calls using the topology hiding scenario, verifying that the UAS
