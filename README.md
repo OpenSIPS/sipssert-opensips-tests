@@ -212,6 +212,24 @@ Runs a scenario when an UPDATE message is being sent while the calls is being
 answered.
 
 Runs a call through dialog where the re-INVITE is challenged by the UAC.
+
+#### 19.prack-uac-auto-multi-totag-early-totag-rr
+
+Similar to `12.prack-uac-auto-multi-totag-success` (auto-prack, two early
+dialogs, 200 OK on the second to-tag), but the UAC does not follow RFC 3261
+13.2.2.4: it sends the ACK and the BYE with the to-tag of the first 180 (the
+early dialog that never answered). Checks that:
+1. the UAS gets the ACK on the answered to-tag, with the INVITE CSeq
+2. the UAS gets the BYE on the answered to-tag
+3. the dialog is terminated after the BYE (MI check)
+
+#### 20.prack-uac-auto-multi-totag-early-totag-th
+
+Same as
+[19.prack-uac-auto-multi-totag-early-totag-rr](#19prack-uac-auto-multi-totag-early-totag-rr),
+but the proxy uses `topology_hiding("D")` instead of Record-Route, so the
+in-dialog requests are matched through `topology_hiding_match()`.
+
 ### Topology Hiding
 
 Runs a set of calls using the topology hiding scenario, verifying that the UAS

@@ -1,0 +1,38 @@
+---
+timeout: 20
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+    config_file: /etc/opensips/opensips.cfg
+
+  - name: SIPP UAS
+    type: uas-sipp
+    username: {{ username }}
+    config_file: scripts/uas-prack.xml
+    require: OpenSIPS
+
+  - name: SIPP UAC
+    type: uac-sipp
+    service: {{ username }}
+    config_file: scripts/uac.xml
+    remote: {{ uas_ip }}:{{ uas_port }}
+    caller: caller
+    duration: 1000
+    require:
+      - started:
+          task: SIPP UAS
+          wait: 0.5
+      - after:
+          task: OpenSIPS
+          wait: 0.5
+
+  # the dialog must be terminated by the BYE, not left until it expires
+  - name: MI check deleted
+    type: opensips-mi
+    script: scripts/check-dialog.py
+    args: deleted
+    require:
+      after:
+        task: SIPP UAC
+        wait: 1
