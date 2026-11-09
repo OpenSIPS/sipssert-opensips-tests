@@ -7,7 +7,7 @@
 SUBSCRIBE sip:[service]@[domain] SIP/2.0
 Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
 Max-Forwards: 70
-From: <sip:setup@[domain]>;tag=[call_number]
+From: <sip:setup@[domain]>;tag=prepare-idle-[call_number]
 To: <sip:[service]@[domain]>
 Call-ID: [call_id]
 CSeq: 1 SUBSCRIBE
@@ -34,7 +34,7 @@ Content-Length: 0
 SUBSCRIBE sip:[service]@[domain] SIP/2.0
 Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
 Max-Forwards: 70
-From: <sip:setup@[domain]>;tag=[call_number]
+From: <sip:setup@[domain]>;tag=prepare-idle-[call_number]
 To: <sip:[service]@[domain]>[peer_tag_param]
 Call-ID: [call_id]
 CSeq: 2 SUBSCRIBE

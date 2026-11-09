@@ -45,11 +45,27 @@ tasks:
     service: shared-line
     require: Check live seizure
 
+  - name: Seize refresh and release another appearance
+    type: uac-sipp
+    port: 5044
+    config_file: scripts/parallel.xml
+    service: shared-line
+    require: Reject competing seizure
+
+  - name: Check concurrent seizures
+    type: opensips-mi
+    script: scripts/check-line.py
+    args: parallel
+    require:
+      started:
+        task: Seize refresh and release another appearance
+        wait: 1
+
   - name: Check original seizure preserved
     type: opensips-mi
     script: scripts/check-line.py
     args: after
-    require: Reject competing seizure
+    require: Seize refresh and release another appearance
 
 volumes:
   db_sqlite:

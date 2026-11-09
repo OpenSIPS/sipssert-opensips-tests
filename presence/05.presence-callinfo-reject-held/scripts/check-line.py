@@ -28,9 +28,10 @@ while True:
         raise RuntimeError("Unexpected appearance 1 state: " + repr(line))
     if phase == "resumed":
         break
-    if line["seize_state"] != 1:
+    seizure = indexes[0] if "seize_expires" in indexes[0] else line
+    if seizure["seize_state"] != 1:
         raise RuntimeError("Expected the original seizure: " + repr(line))
-    if line["seize_expires"] < 0:
+    if seizure["seize_expires"] < 0:
         break
     if phase != "before" or time.monotonic() >= deadline:
         raise RuntimeError("Expected expired seizure: " + repr(line))

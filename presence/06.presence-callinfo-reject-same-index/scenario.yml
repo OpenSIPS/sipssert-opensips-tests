@@ -1,0 +1,50 @@
+---
+timeout: 20
+tasks:
+  - name: Init SQLite DB
+    type: generic
+    image: alpine
+    volumes: [db_sqlite]
+    args: cp /home/opensips.db /var/lib/opensips/db_sqlite/opensips.db
+
+  - name: OpenSIPS
+    type: opensips
+    volumes: [db_sqlite]
+    require:
+      after:
+        task: Init SQLite DB
+        wait: 1
+
+  - name: Initial seizure
+    type: uac-sipp
+    port: 5041
+    config_file: scripts/seize.xml
+    service: shared-line
+    require:
+      started:
+        task: OpenSIPS
+        wait: 1
+
+  - name: Check live seizure
+    type: opensips-mi
+    script: scripts/check-line.py
+    args: before
+    require: Initial seizure
+
+  - name: Reject competing seizure of same index
+    type: uac-sipp
+    port: 5042
+    config_file: scripts/reseize.xml
+    service: shared-line
+    require: Check live seizure
+
+  - name: Check original seizure preserved
+    type: opensips-mi
+    script: scripts/check-line.py
+    args: after
+    require: Reject competing seizure of same index
+
+volumes:
+  db_sqlite:
+    bind: /var/lib/opensips/db_sqlite
+    mode: rw

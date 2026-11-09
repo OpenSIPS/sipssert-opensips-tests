@@ -23,9 +23,10 @@ while True:
     indexes = [idx for idx in line["indexes"] if idx["index"] == 1]
     if len(indexes) != 1 or indexes[0]["state"] != "active":
         raise RuntimeError("Appearance 1 must remain active: " + repr(line))
-    if line["seize_state"] != 1:
+    seizure = indexes[0] if "seize_expires" in indexes[0] else line
+    if seizure["seize_state"] != 1:
         raise RuntimeError("Expected the original seizure: " + repr(line))
-    if line["seize_expires"] < 0:
+    if seizure["seize_expires"] < 0:
         break
     if phase != "before" or time.monotonic() >= deadline:
         raise RuntimeError("Expected expired seizure: " + repr(line))

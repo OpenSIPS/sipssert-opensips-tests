@@ -17,6 +17,5 @@ retrieval by another endpoint or decide the signaling required for that feature.
 From the SIPssert tests repository:
 
 ```sh
-sudo sipssert presence -t 05.presence-callinfo-reject-held -E opensips_image=opensips-local:callinfo
-sudo sipssert presence -t 05.presence-callinfo-reject-held -E opensips_image=opensips-local:callinfo-fix
+sudo sipssert presence -t 05.presence-callinfo-reject-held
 ```

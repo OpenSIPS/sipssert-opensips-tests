@@ -17,16 +17,8 @@ NOTIFY if one is sent. The
 presence cleanup and subscription database timers run every second so expiry notification fits within the
 test timeout.
 
-Build the image from the desired OpenSIPS checkout (see
-`docker/README.sipssert-local.md` in that repository):
+From the SIPssert tests repository:
 
 ```sh
-docker build -f docker/Dockerfile.sipssert-local -t opensips-local:callinfo .
+sudo sipssert presence -t 02.presence-callinfo-reject-active
 ```
-
-Then, from the SIPssert tests repository:
-
-```sh
-sudo sipssert presence -t 02.presence-callinfo-reject-active -E opensips_image=opensips-local:callinfo
-```
-

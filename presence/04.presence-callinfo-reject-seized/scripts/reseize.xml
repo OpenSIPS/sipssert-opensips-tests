@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
-<scenario name="Reject seizure while another appearance is seized">
+<scenario name="Reject seizure of an already seized appearance">
   <Global variables="domain"/>
   <Reference variables="domain"/>
   <send retrans="500"><![CDATA[
 SUBSCRIBE sip:[service]@[domain] SIP/2.0
 Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
 Max-Forwards: 70
-From: <sip:contender@[domain]>;tag=[call_number]
+From: <sip:contender@[domain]>;tag=reseize-[call_number]
 To: <sip:[service]@[domain]>
 Call-ID: [call_id]
 CSeq: 1 SUBSCRIBE
 Contact: <sip:sipp@[local_ip]:[local_port]>
 Event: line-seize
 Expires: 10
-Call-Info: <sip:[service]@[domain]>;appearance-index=2
+Call-Info: <sip:[service]@[domain]>;appearance-index=1
 Content-Length: 0
 
 ]]></send>

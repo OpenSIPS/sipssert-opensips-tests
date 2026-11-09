@@ -7,13 +7,13 @@
 SUBSCRIBE sip:[service]@[domain] SIP/2.0
 Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
 Max-Forwards: 70
-From: <sip:shared-line@[domain]>;tag=[call_number]
+From: <sip:shared-line@[domain]>;tag=seize-[call_number]
 To: <sip:[service]@[domain]>
 Call-ID: [call_id]
 CSeq: 1 SUBSCRIBE
 Contact: <sip:sipp@[local_ip]:[local_port]>
 Event: line-seize
-Expires: 10
+Expires: 30
 Call-Info: <sip:[service]@[domain]>;appearance-index=1
 Content-Length: 0
 

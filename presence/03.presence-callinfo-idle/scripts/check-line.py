@@ -28,12 +28,14 @@ while True:
     if len(idle) != 1 or idle[0]["state"] != expected_state:
         raise RuntimeError("Unexpected appearance 2 state: " + repr(line))
     if phase == "after":
-        if line["seize_state"] != 2 or line["seize_expires"] <= 0:
+        seizure = idle[0] if "seize_expires" in idle[0] else line
+        if seizure["seize_state"] != 2 or seizure["seize_expires"] <= 0:
             raise RuntimeError("Appearance 2 must have a live seizure: " + repr(line))
         break
-    if line["seize_state"] != 1:
+    seizure = indexes[0] if "seize_expires" in indexes[0] else line
+    if seizure["seize_state"] != 1:
         raise RuntimeError("Expected the original seizure: " + repr(line))
-    if line["seize_expires"] < 0:
+    if seizure["seize_expires"] < 0:
         break
     if phase != "before" or time.monotonic() >= deadline:
         raise RuntimeError("Expected expired seizure: " + repr(line))

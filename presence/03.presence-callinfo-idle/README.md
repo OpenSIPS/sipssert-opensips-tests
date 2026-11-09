@@ -10,14 +10,12 @@ MI confirms that appearance 1 is active, its seizure has expired, and appearance
 MI then confirms that appearance 2 is seized with a live expiry while appearance
 1 remains active. The original call ends normally with BYE / 200 OK.
 
-This should pass both before and after adding occupied-appearance rejection:
-the requested appearance is idle, even though another appearance on the same
-shared line has an active call. A still-live seizure is deliberately excluded
-from the preconditions, since it prevents a new seizure anywhere on the line.
+This case checks an idle appearance while another appearance is in an active
+call. The original seizure has expired before the request. Test 04 separately
+checks concurrent live seizures on different indexes.
 
 From the SIPssert tests repository:
 
 ```sh
-sudo sipssert presence -t 03.presence-callinfo-idle -E opensips_image=opensips-local:callinfo
-sudo sipssert presence -t 03.presence-callinfo-idle -E opensips_image=opensips-local:callinfo-fix
+sudo sipssert presence -t 03.presence-callinfo-idle
 ```
