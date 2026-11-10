@@ -1,0 +1,47 @@
+---
+# nats_consumer, request/reply from the script: for each OPTIONS the route
+# calls nats_request() asynchronously (async + resume route) on rpc.lookup and answers 200 only when the reply
+# arrived and says "allowed" (a nats-box responder).  SIPp requires the 200.
+timeout: 40
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: Responder
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    daemon: true
+    stop_timeout: 1
+    entrypoint: sh
+    # stopped at the end of the scenario: exit 0 on SIGTERM
+    args: ["-c", "trap 'kill $p; exit 0' TERM; nats -s nats://{{ nats_ip }}:4222 reply rpc.lookup allowed & p=$!; wait $p"]
+    require:
+      healthy: NATS
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      started:
+        task: Responder
+        wait: 1
+
+  - name: OPTIONS
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-options.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 3

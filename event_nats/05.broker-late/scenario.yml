@@ -1,0 +1,45 @@
+---
+# event_nats with the broker down at startup: OpenSIPS starts anyway
+# (degraded, background connect retries) and, once the broker comes up,
+# a REGISTER is published as usual.  The broker starts 4 s after OpenSIPS.
+timeout: 40
+
+tasks:
+  - name: OpenSIPS
+    type: opensips
+
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+    require:
+      started:
+        task: OpenSIPS
+        wait: 4
+
+  - name: Subscriber
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "timeout 25 nats -s nats://{{ nats_ip }}:4222 sub test.sip.register --count 1 --raw > /tmp/got; cat /tmp/got; grep -q 'method=REGISTER' /tmp/got"]
+    require:
+      healthy: NATS
+
+  # the pool retries every second: give it a few
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      started:
+        task: Subscriber
+        wait: 4

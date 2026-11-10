@@ -1,0 +1,37 @@
+---
+network_range: 192.168.52.0/24
+network_gateway: 192.168.52.254
+network_range_osbr1: 10.52.0.0/24
+network_gateway_osbr1: 10.52.0.254
+#opensips_version: 4.1
+opensips_ip: 192.168.52.1
+opensips_ip_osbr1: 10.52.0.1
+opensips_port: 5060
+uac_port: 5040
+uas_ip: 192.168.52.3
+uas_ip_osbr1: 10.52.0.3
+uas_port: 5080
+mysql_ip: 192.168.52.2
+mysql_root_host: 192.168.52.%
+username: testing
+password: T3st|n6
+nonce: 035cf70b1c4fcf4731150330410151743443
+
+# --- rtp_relay / rtpengine (used only by the rtp_relay test set) ---
+rtpengine_ip: 192.168.52.4
+rtpengine_ng_port: 22222
+# Stock Debian base; the rtp_relay rtpengine task apt-installs the
+# rtpengine-daemon package (sipwise upstream, userspace-only) at start.
+rtpengine_image: debian:trixie-slim
+# packet-capture sidecar (host networking, sniffs the osbr0 bridge device)
+capture_image: nicolaka/netshoot
+# pure-python ng checker; python-opensips already ships python3
+checker_image: ghcr.io/opensips/python-opensips
+
+# --- NATS sets ---
+nats_ip: 192.168.52.10
+# every task that starts before OpenSIPS needs a fixed IP: a dynamic one
+# would take 192.168.52.1, the first free address
+natsbox_ip: 192.168.52.11
+nats_image: nats:2.11.10-alpine
+natsbox_image: natsio/nats-box:latest

@@ -1,0 +1,14 @@
+---
+# cachedb_nats, require_secure_url=1: an insecure connection URL (plaintext
+# nats://, no credentials) for the registration store refuses the start.
+# OpenSIPS runs from a generic task so that the expected non-zero exit is
+# the pass: the wrapper inverts it and checks the reason was logged.
+timeout: 20
+
+tasks:
+  - name: OpenSIPS must refuse
+    type: generic
+    image: {{ opensips_image }}
+    ip: {{ opensips_ip }}
+    entrypoint: sh
+    args: ["-c", "/usr/sbin/opensips -F -f /home/opensips.cfg -l udp:{{ opensips_ip }}:{{ opensips_port }} > /tmp/log 2>&1; rc=$?; cat /tmp/log; [ $rc -ne 0 ] && grep -q 'require_secure_url=1 -- refusing to start' /tmp/log"]

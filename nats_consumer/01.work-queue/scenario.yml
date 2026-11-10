@@ -1,0 +1,46 @@
+---
+# nats_consumer, durable work queue: a consumer bound with the bind
+# modparam receives the jobs published on the stream; the script fetches
+# each one, publishes its result and acks it.  The checker publishes three
+# jobs, waits for the three results and requires the consumer to end with
+# nothing pending and nothing unacknowledged.
+timeout: 60
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: Stream
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "nats -s nats://{{ nats_ip }}:4222 stream add WORK --subjects 'work.jobs' --defaults"]
+    require:
+      healthy: NATS
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      after: Stream
+
+  - name: Jobs
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "S='-s nats://{{ nats_ip }}:4222'; timeout 30 nats $S sub work.done --count 3 --raw > /tmp/done & sleep 1; for i in 1 2 3; do nats $S pub work.jobs job-$i; done; wait; cat /tmp/done; for i in 1 2 3; do grep -qx done:job-$i /tmp/done || exit 1; done; sleep 2; nats $S consumer info WORK jobs_worker --json > /tmp/ci; grep -E '\"num_(pending|ack_pending)\"' /tmp/ci; grep -qE '\"num_pending\": ?0,' /tmp/ci && grep -qE '\"num_ack_pending\": ?0,' /tmp/ci"]
+    require:
+      started:
+        task: OpenSIPS
+        wait: 4

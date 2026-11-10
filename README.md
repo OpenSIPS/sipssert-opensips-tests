@@ -672,6 +672,74 @@ Tests if a call is accepted based on the source address.
 
 Tests if a call is rejected based on the source address.
 
+### NATS
+
+The `nats`, `event_nats`, `cachedb_nats` and `nats_consumer` sets test the
+NATS modules (modules-contrib) against a NATS server (`nats` image) and the
+`nats` CLI (`nats-box` image).  The published `opensips-sipssert` image does
+not carry the NATS modules yet, so these sets are not in `run.yml`: run them
+with an image that has them (the five NATS modules, libnats >= 3.14 built
+with TLS, plus `tls_mgm`, `tls_openssl`, `clusterer`, `proto_bin`), e.g.
+```
+sipssert -E opensips_image=<image> nats event_nats cachedb_nats nats_consumer
+```
+
+#### nats/01.one-connection-per-process
+
+With event_nats, cachedb_nats and nats_consumer loaded, the broker sees at
+most one connection per OpenSIPS process: the modules share nats.so's pool.
+
+#### event_nats/01.publish-register
+
+`nats_publish()` from the script: a REGISTER reaches a NATS subscriber.
+
+#### event_nats/02.jetstream-dedup
+
+`nats_publish()` with a JetStream message id: the same REGISTER twice is
+stored once.
+
+#### event_nats/03.auth-user-password
+
+A broker requiring a user and password, the credentials in `nats_url`.
+
+#### event_nats/04.tls
+
+Mutual TLS, configured in the tls_mgm `nats` client domain (test-only
+certificates in `tls/`).
+
+#### event_nats/05.broker-late
+
+The broker starts after OpenSIPS: OpenSIPS starts degraded and publishes once
+the broker is up.
+
+#### cachedb_nats/01.secure-url-refused
+
+`require_secure_url=1` with a plaintext URL refuses to start.
+
+#### cachedb_nats/02.register-stored
+
+usrloc full-sharing-cachedb on NATS KV: the REGISTER is stored in the bucket
+and the contact removed by the un-REGISTER.
+
+#### cachedb_nats/03.kv-script
+
+`nats_kv_get()` reads a policy that decides the answer; `nats_kv_put()`
+records the call.
+
+#### cachedb_nats/04.reg-list-mi
+
+The `nats_reg_list` MI command lists the registered AoR.
+
+#### nats_consumer/01.work-queue
+
+A durable consumer bound with the `bind` modparam: every job is fetched,
+answered and acked, nothing left pending.
+
+#### nats_consumer/02.request-reply
+
+An asynchronous `nats_request()` from the request route gets the answer of a
+NATS responder.
+
 ## Execution
 
 Install the `sipssert` tool and run it in the main directory.

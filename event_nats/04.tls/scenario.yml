@@ -1,0 +1,48 @@
+---
+# event_nats over mutual TLS: the broker requires TLS and a client
+# certificate; OpenSIPS connects with the tls_mgm "nats" client domain
+# (its certificate, and the CA that signed the broker's) and the publish
+# arrives.  The fixtures in tls/ are test-only, self-signed.
+timeout: 30
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222", "--tls", "--tlscert", "/home/tls/server.pem",
+           "--tlskey", "/home/tls/server.key", "--tlsverify",
+           "--tlscacert", "/home/tls/ca.pem"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: Subscriber
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "timeout 20 nats -s tls://{{ nats_ip }}:4222 --tlscert /home/tls/client.pem --tlskey /home/tls/client.key --tlsca /home/tls/ca.pem sub test.sip.register --count 1 --raw > /tmp/got; cat /tmp/got; grep -q 'method=REGISTER' /tmp/got"]
+    require:
+      healthy: NATS
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      healthy: NATS
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      - started:
+          task: OpenSIPS
+          wait: 3
+      - started:
+          task: Subscriber
+          wait: 1

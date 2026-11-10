@@ -1,0 +1,54 @@
+---
+# cachedb_nats script KV functions: nats_kv_get() reads a per-user policy
+# seeded into the bucket from outside and the route answers by it;
+# nats_kv_put() records the call back, which the checker reads.
+timeout: 50
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      healthy: NATS
+
+  # OpenSIPS creates the bucket with its own settings; seed it after
+  - name: Seed policy
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "nats -s nats://{{ nats_ip }}:4222 kv put opensips policy.{{ username }} allowed"]
+    require:
+      started:
+        task: OpenSIPS
+        wait: 4
+
+  - name: OPTIONS
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-options.xml
+    require:
+      after: Seed policy
+
+  - name: Recorded
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "v=$(nats -s nats://{{ nats_ip }}:4222 kv get opensips seen.{{ username }} --raw); echo \"seen: $v\"; [ -n \"$v\" ]"]
+    require:
+      after:
+        task: OPTIONS
+        wait: 1

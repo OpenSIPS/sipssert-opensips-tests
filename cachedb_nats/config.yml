@@ -1,0 +1,58 @@
+---
+bridge_networks:
+  - name: osbr0
+    # pin the host-side bridge device name so a host-networked capture
+    # sidecar (rtp_relay set) can tcpdump -i osbr0 and see inter-container
+    # traffic; harmless for every other set
+    device: osbr0
+    subnet: {{ network_range }}
+    gateway: {{ network_gateway }}
+  - name: osbr1
+    device: osbr1
+    subnet: {{ network_range_osbr1 }}
+    gateway: {{ network_gateway_osbr1 }}
+
+# default network that should be used by all scenarios
+network: osbr0
+
+# global defaults
+defaults:
+  uac-sipp:
+    port: {{ uac_port }}
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    keys:
+      domain: {{ opensips_ip }}
+  uas-sipp:
+    ip: {{ uas_ip }}
+    port: {{ uas_port }}
+    keys:
+      domain: {{ opensips_ip }}
+  uac-sipp-stir-shaken:
+    port: {{ uac_port }}
+    proxy: {{ opensips_ip }}:{{ opensips_port }}
+    keys:
+      domain: {{ opensips_ip }}
+  opensips-cli:
+    mi_ip: {{ opensips_ip }}
+  opensips-mi:
+    mi_ip: {{ opensips_ip }}
+    image: ghcr.io/opensips/python-opensips
+  opensips:
+    ip: {{ opensips_ip }}
+    image: '{{ opensips_image if opensips_image is defined else "ghcr.io/opensips/opensips-sipssert:" ~ (opensips_version if opensips_version is defined else "latest") }}'
+    socket: udp:{{ opensips_ip }}:{{ opensips_port }}
+    stop_timeout: 5
+  mysql:
+    ip: {{ mysql_ip }}
+    image: mysql/mysql-server:8.0
+    label: mysql
+    stop_timeout: 5
+    healthcheck:
+      test: /healthcheck.sh
+      interval: 2500000000
+      timeout: 2500000000
+      retries: 10
+    env:
+      MYSQL_ROOT_HOST: {{ mysql_root_host }}
+  mysql-client:
+    host: {{ mysql_ip }}

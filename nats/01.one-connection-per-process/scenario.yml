@@ -1,0 +1,35 @@
+---
+# nats.so's connection pool: three NATS modules in one OpenSIPS share one
+# connection per process.  The checker compares the broker's client list
+# (monitoring /connz, the OpenSIPS address) with the processes (MI ps):
+# a connection per module per process would exceed it.
+timeout: 40
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      healthy: NATS
+
+  - name: MI connections
+    type: opensips-mi
+    script: check-connections.py
+    mi_type: http
+    args: {{ nats_ip }} {{ opensips_ip }}
+    require:
+      started:
+        task: OpenSIPS
+        wait: 5

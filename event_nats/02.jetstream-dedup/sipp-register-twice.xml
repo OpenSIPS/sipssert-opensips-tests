@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- the same REGISTER (same Call-ID) twice: published with msg_id = $ci,
+     JetStream keeps one message -->
+<scenario name="UAC: REGISTER twice, one Call-ID">
+ <Global variables="domain" />
+ <Reference variables="domain" />
+
+ <send>
+    <![CDATA[
+
+      REGISTER sip:[domain] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      To: <sip:[service]@[domain]>
+      From: <sip:[service]@[domain]>;tag=[call_number]
+      Contact: <sip:[service]@[local_ip]:[local_port]>;transport=[transport]
+      Expires: 60
+      Call-ID: [call_id]
+      Max-Forwards: 70
+      CSeq: 1 REGISTER
+      Content-Length: 0
+
+    ]]>
+ </send>
+
+ <recv response="200">
+ </recv>
+
+ <send>
+    <![CDATA[
+
+      REGISTER sip:[domain] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      To: <sip:[service]@[domain]>
+      From: <sip:[service]@[domain]>;tag=[call_number]
+      Contact: <sip:[service]@[local_ip]:[local_port]>;transport=[transport]
+      Expires: 60
+      Call-ID: [call_id]
+      Max-Forwards: 70
+      CSeq: 2 REGISTER
+      Content-Length: 0
+
+    ]]>
+ </send>
+
+ <recv response="200">
+ </recv>
+
+</scenario>

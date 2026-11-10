@@ -1,0 +1,45 @@
+---
+# event_nats: nats_publish() from the script reaches a NATS subscriber.
+# A REGISTER is answered and published on test.sip.register with the
+# method and the From user; the subscriber's exit code is the verdict.
+timeout: 30
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: Subscriber
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "timeout 20 nats -s nats://{{ nats_ip }}:4222 sub test.sip.register --count 1 --raw > /tmp/got; cat /tmp/got; grep -q 'method=REGISTER' /tmp/got && grep -q 'from={{ username }}' /tmp/got"]
+    require:
+      healthy: NATS
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      healthy: NATS
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      - started:
+          task: OpenSIPS
+          wait: 3
+      - started:
+          task: Subscriber
+          wait: 1

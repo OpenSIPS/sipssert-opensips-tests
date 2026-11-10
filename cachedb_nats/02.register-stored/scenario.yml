@@ -1,0 +1,62 @@
+---
+# cachedb_nats as the usrloc full-sharing store: a REGISTER is saved as the
+# AoR's row in the NATS KV bucket (the contact in it); an un-REGISTER takes
+# the contact out again.  nats-box reads the bucket directly.
+timeout: 60
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      healthy: NATS
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 4
+
+  - name: Row stored
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "S='-s nats://{{ nats_ip }}:4222'; nats $S kv ls opensips; k=$(nats $S kv ls opensips | grep {{ username }}); [ -n \"$k\" ] || exit 1; nats $S kv get opensips \"$k\" --raw | tee /tmp/row; grep -q 'sip:{{ username }}@' /tmp/row"]
+    require:
+      after:
+        task: Register
+        wait: 1
+
+  - name: Unregister
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-unregister.xml
+    require:
+      after: Row stored
+
+  - name: Contact removed
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "S='-s nats://{{ nats_ip }}:4222'; k=$(nats $S kv ls opensips | grep {{ username }}); [ -z \"$k\" ] && exit 0; nats $S kv get opensips \"$k\" --raw | tee /tmp/row; ! grep -q 'sip:{{ username }}@' /tmp/row"]
+    require:
+      after:
+        task: Unregister
+        wait: 1

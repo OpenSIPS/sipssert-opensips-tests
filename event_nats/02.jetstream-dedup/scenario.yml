@@ -1,0 +1,53 @@
+---
+# event_nats with jetstream=1: nats_publish(subject, payload, msg_id) stores
+# into the stream with the given id, so two publishes with the same id (the
+# same REGISTER twice) leave ONE message.  The checker reads the stream.
+timeout: 40
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: Stream
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "nats -s nats://{{ nats_ip }}:4222 stream add TESTJS --subjects 'test.js.>' --defaults --dupe-window 2m"]
+    require:
+      healthy: NATS
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      after: Stream
+
+  - name: Register twice
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register-twice.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 3
+
+  - name: Check stream
+    type: generic
+    image: {{ natsbox_image }}
+    ip: {{ natsbox_ip }}
+    entrypoint: sh
+    args: ["-c", "nats -s nats://{{ nats_ip }}:4222 stream info TESTJS --json > /tmp/si; grep -E '\"messages\": ?[0-9]+' /tmp/si; grep -qE '\"messages\": ?1,' /tmp/si"]
+    require:
+      after:
+        task: Register twice
+        wait: 1

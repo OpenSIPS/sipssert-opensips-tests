@@ -1,0 +1,43 @@
+---
+# cachedb_nats registration observability: after a REGISTER saved through
+# usrloc full-sharing-cachedb, the nats_reg_list MI command (a scan of the
+# bucket) lists the AoR.
+timeout: 50
+
+tasks:
+  - name: NATS
+    type: generic
+    image: {{ nats_image }}
+    ip: {{ nats_ip }}
+    daemon: true
+    stop_timeout: 2
+    args: ["-js", "-m", "8222"]
+    healthcheck:
+      test: "wget -q -O /dev/null http://127.0.0.1:8222/healthz"
+      interval: 1000000000
+      timeout: 1000000000
+      retries: 30
+
+  - name: OpenSIPS
+    type: opensips
+    require:
+      healthy: NATS
+
+  - name: Register
+    type: uac-sipp
+    username: {{ username }}
+    config_file: sipp-register.xml
+    require:
+      started:
+        task: OpenSIPS
+        wait: 4
+
+  - name: MI nats_reg_list
+    type: opensips-mi
+    script: check-reg-list.py
+    mi_type: http
+    args: {{ username }}
+    require:
+      after:
+        task: Register
+        wait: 1
